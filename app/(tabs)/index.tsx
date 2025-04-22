@@ -4,9 +4,7 @@ import { Link } from 'expo-router';
 export default function Index() {
   return (
     <View style={styles.container}>"
-      <Text style={styles.text}>Balls</Text>
-      <Link href="/onboarding">Onboarding</Link>
-      <Link href="/drink/flavour1">Your Top Flavour</Link>
+      <Text style={styles.text}>Munter</Text>
     </View>
   );
 }
