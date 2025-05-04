@@ -1,20 +1,14 @@
 declare module '*.png' {
-    const content: number;
-    export default content;
+    const value: number;
+    export = value;
   }
   
   declare module '*.jpg' {
-    const content: number;
-    export default content;
+    const value: number;
+    export = value;
   }
   
-  declare module '*.jpeg' {
-    const content: number;
-    export default content;
+  declare module '*.webp' {
+    const value: number;
+    export = value;
   }
-  
-  declare module '*.svg' {
-    const content: number;
-    export default content;
-  }
-  
