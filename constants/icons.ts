@@ -6,6 +6,9 @@ import save from "@/assets/icons/save.png";
 import star from "@/assets/icons/star.png";
 import play from "@/assets/icons/play.png";
 import arrow from "@/assets/icons/arrow.png";
+import medal from "@/assets/icons/medal.png";
+import add from "@/assets/icons/add.png";
+import stats from "@/assets/icons/stats.png";
 
 export const icons = {
   home,
@@ -16,4 +19,7 @@ export const icons = {
   star,
   play,
   arrow,
+  medal,
+  add,
+  stats,
 };

@@ -20,7 +20,6 @@ const _layout = () => {
                         >
                             <Image source={icons.home}
                                 tintColor="#151312" className='size-5' />
-                                <Text>Home</Text>
                         </ImageBackground>
                     </>
                 ),
@@ -31,6 +30,17 @@ const _layout = () => {
             options={{
                 title: 'Add',
                 headerShown: false,
+                tabBarIcon: ({ focused }) => (
+                    <>
+                        <ImageBackground
+                            source={images.highlight}
+                            className="flex flex-row w-full flex-1 min-w-[112px] min-h-14 mt-4 justify-center items-center rounded-full overflow-hidden"
+                        >
+                            <Image source={icons.add}
+                                tintColor="#151312" className='size-5' />
+                        </ImageBackground>
+                    </>
+                ),
             }}
         />
         <Tabs.Screen
@@ -38,6 +48,17 @@ const _layout = () => {
             options={{
                 title: 'Ranks',
                 headerShown: false,
+                tabBarIcon: ({ focused }) => (
+                    <>
+                        <ImageBackground
+                            source={images.highlight}
+                            className="flex flex-row w-full flex-1 min-w-[112px] min-h-14 mt-4 justify-center items-center rounded-full overflow-hidden"
+                        >
+                            <Image source={icons.medal}
+                                tintColor="#151312" className='size-5' />
+                        </ImageBackground>
+                    </>
+                ),
             }}
         />
         <Tabs.Screen
@@ -45,6 +66,17 @@ const _layout = () => {
             options={{
                 title: 'Stats',
                 headerShown: false,
+                tabBarIcon: ({ focused }) => (
+                    <>
+                        <ImageBackground
+                            source={images.highlight}
+                            className="flex flex-row w-full flex-1 min-w-[112px] min-h-14 mt-4 justify-center items-center rounded-full overflow-hidden"
+                        >
+                            <Image source={icons.stats}
+                                tintColor="#151312" className='size-5' />
+                        </ImageBackground>
+                    </>
+                ),
             }}
         />
     </Tabs>
