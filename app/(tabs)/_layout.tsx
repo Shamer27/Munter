@@ -1,11 +1,20 @@
-import { View, Text, ImageBackground, Image } from 'react-native'
-import React from 'react';
 import { Tabs } from 'expo-router';
-import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
+import { View, Text, ImageBackground, Image } from 'react-native'
+import { icons } from "@/constants/icons";
 
-const _layout = () => {
-  return (
+const TabIcon = () => {
+    return (
+        <ImageBackground
+            source={images.highlight}
+            className="flex flex-row w-full flex1 min-w-[112px] min-h-14 mt-4 justify-center items-center rounded-full overflow-hidden"
+            >
+                <Image source={icons.home} tintColor="#151312" className="size-5" />
+                <Text className="text-secondary text base font-semibold ml=2">Home</Text>
+            </ImageBackground>  
+    )
+}
+
     <Tabs>
         <Tabs.Screen
             name="index"
@@ -52,7 +61,10 @@ const _layout = () => {
                     <>
                         <ImageBackground
                             source={images.highlight}
-                            className="flex flex-row w-full flex-1 min-w-[112px] min-h-14 mt-4 justify-center items-center rounded-full overflow-hidden"
+                            className="flex flex-row w-full flex-1 
+                            min-w-[112px] min-h-14 
+                            mt-4 justify-center 
+                            items-center rounded-full overflow-hidden"
                         >
                             <Image source={icons.medal}
                                 tintColor="#151312" className='size-5' />
@@ -80,7 +92,8 @@ const _layout = () => {
             }}
         />
     </Tabs>
-  )
-}
+  
 
-export default _layout
+
+
+export default TabIcon
