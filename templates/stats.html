@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Allows users to scroll for smaller screens -->
+
+
+<!-- Displays the table next to the image if space is avaliable, can be scrolled for smaller screens -->
+<div style="display: inline-block; max-width: 100%; overflow-x: auto;">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Flavour Statistics</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Flavour</th>
+      <th>Total Drinks</th>
+      <th>Total Caffeine (mg)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for flavour in flavours %}
+      <tr>
+        <td>{{ flavour.flavour }}</td>
+        <td>{{ flavour.totalDrinks }}</td>
+        <td>{{ flavour.totalCaffeine }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</body>
+</html>
+
+{ % endblock % }

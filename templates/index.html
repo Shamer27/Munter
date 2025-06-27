@@ -1,0 +1,38 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>Welcome to YouReview. </h1>
+
+    {% if session['username'] %}
+    <br>
+    <p>Hello {{ session['username'] }}</p>
+{% endif %}
+
+</div>
+
+<br>
+
+
+<body>
+
+
+    <div class="reviews-container">
+            <h2>Logged Drinks</h2>
+            <ul>
+            {% for flavour in flavours %}
+                <li>
+                {{ flavour.flavour }} - {{ flavour.totalDrinks }} drink(s) - {{ flavour.totalCaffeine }} mg caffeine
+                </li>
+            {% endfor %}
+            </ul>
+
+    </div>
+
+
+</body>
+
+{% endblock %}

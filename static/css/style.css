@@ -1,0 +1,342 @@
+/* @import url("https://fonts.googleapis.com/css?family=Nunito:400,700&display=swap"); */
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #fdfdfd;
+    font-family: "Nunito", sans-serif;
+    font-size: 1rem;
+}
+
+main {
+    max-width: 900px;
+    margin: auto;
+    padding: 1rem;
+    line-height: 1.5;
+}
+
+.banner {
+    text-align: left;
+    background: #2b2b2b;
+    font-size: 3em;
+    width: 100%;
+    
+}
+
+.bannerImage {
+    max-width: 100%;
+    max-height: 150px;
+}
+
+.logo {
+    padding-top: 15px;
+    padding-left: 10px;
+    text-align: center;
+}
+
+div .banner {
+    position: relative;
+    display: inline;
+    height: 150px; 
+    object-fit: cover;
+    object-position: 25% 25%; 
+  }
+div .logoImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+nav {
+    overflow: hidden;
+    background-color: #333;
+    text-align: center; 
+}
+
+nav a {
+    display: inline-block;
+    color: #f2f2f2;
+
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+nav a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+nav a.active {
+    background-color: #04AA6D;
+    color: white;
+}
+
+.reviewBox {
+    width: 870px;
+    height: 100px;
+    max-width: 870px;
+}
+
+.bannerButtons {
+    float: right;
+    margin-top: 35px;
+    margin-right: 20px;
+    size: 110%;
+}
+
+.review_table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 8px;
+   
+}
+input[type=text], input[type="password"], input[type="date"], input[type="number"], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit] {
+    width: 100%;
+    background-color: #89BBFE;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.05em;
+}
+
+input[type=submit]:hover {
+    background-color: #89BBFE;
+}
+
+
+
+a:visited { 
+    text-decoration: none;  
+    color: black;
+}
+a:link { 
+    text-decoration: none; 
+    color:black; 
+}
+a:hover { text-decoration: none; color:black; }
+a:focus { text-decoration: none; color:black; }
+a:hover, a:active { text-decoration: none; color:black }
+
+button {
+    background-color: 89BBFE;
+    color: 89BBFE;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.05em;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    /* margin: 20px; */
+}
+
+
+
+
+/* Review on home page */
+.review {
+    border-bottom: 1px solid #ccc;
+    padding: 15px 0;
+}
+
+.reviews-container {
+    max-width: 600px;
+}
+
+.review h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+.review .gameName {
+    color: #555;
+    font-size: 0.9em;
+}
+.review .content {
+    margin: 5px 0;
+}
+.review .rating {
+    font-weight: bold;
+}
+
+.review .link {
+    width: 14px;
+    height: 14px;
+}
+
+
+ /* Button to get back to top of page */
+.topButton {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: #89BBFE;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 4px;
+  }
+  
+  .topButton:hover {
+    background-color: #555;
+  }
+
+/* Nav buttons */
+/* .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 30px;
+    border-bottom: 2px solid gray;
+} */
+
+
+
+/* .banner .navLinks {
+    display: flex;
+    gap: 20px;
+} */
+
+.banner button {
+    font-size: 18px;
+    padding: 8px 15px;
+    border: none;
+    background-color: #89BBFE;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.banner button:hover {
+    background-color: #89BBFE;
+}
+
+/* Ensure sufficient touch target spacing for buttons */
+.bannerButtons button {
+    padding: 10px 20px; /* Increase padding for larger touch targets */
+    margin: 10px; /* Add margin between buttons */
+    font-size: 16px; /* Increase font size for better readability */
+}
+
+.bannerButtons a {
+    text-decoration: none; /* Remove underline from links */
+    color: inherit; /* Inherit color from button */
+}
+
+.bannerButtons button a {
+    display: block; /* Make the link fill the button */
+    width: 100%; /* Ensure the link takes up the full width of the button */
+    height: 100%; /* Ensure the link takes up the full height of the button */
+    text-align: center; /* Center the text inside the button */
+    padding: 10px 20px; /* Add padding to the link */
+}
+
+/* Place the navbar at the bottom of the page, and make it stick */
+.navbar {
+  background-color: #333;
+  overflow: hidden;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Style the links inside the navigation bar */
+.navbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.navbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Add a color to the active/current link */
+.navbar a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+
+* { box-sizing: border-box; }
+body {
+  font: 16px Arial;
+}
+.autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 16px;
+}
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+}
+input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+}
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
