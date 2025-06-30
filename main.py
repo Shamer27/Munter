@@ -2,10 +2,10 @@ import sqlite3
 from flask import Flask, render_template, request, session, redirect, flash, jsonify
 import db
 from werkzeug.exceptions import abort
-from flask_compress import Compress
+from flask import Flask
+
 
 app = Flask(__name__)
-Compress(app)
 app.secret_key = "munt"
 
 @app.route("/")
