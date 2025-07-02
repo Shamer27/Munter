@@ -1,220 +1,318 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Add Drink</title>
-  <style>
-    .autocomplete { position: relative; display: inline-block; }
-    .autocomplete-items {
-      position: absolute;
-      border: 1px solid #d4d4d4;
-      z-index: 99;
-      top: 100%; left: 0; right: 0;
-    }
-    .autocomplete-items div {
-      padding: 10px;
-      background: #fff;
-      cursor: pointer;
-    }
-    .autocomplete-items div:hover {
-      background: #e9e9e9;
-    }
-  </style>
-</head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font: 16px Arial;  
+}
+
+/*the container must be positioned relative:*/
+.autocomplete {
+  position: relative;
+  display: inline-block;
+}
+
+input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 16px;
+}
+
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+}
+
+input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+  cursor: pointer;
+}
+
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff; 
+  border-bottom: 1px solid #d4d4d4; 
+}
+
+/*when hovering an item:*/
+.autocomplete-items div:hover {
+  background-color: #e9e9e9; 
+}
+
+/*when navigating through the items using the arrow keys:*/
+.autocomplete-active {
+  background-color: DodgerBlue !important; 
+  color: #ffffff; 
+}
+</style>
+</head>     
 <body>
 
-<h2>Add a Drink</h2>
+<h2>Add A drink</h2>
 
-<form action="/add" method="POST" autocomplete="off">
+<p></p>
+
+<!--Make sure the form has the autocomplete function switched off:-->
+<form autocomplete="off" action="/action_page.php">
   <div class="autocomplete" style="width:300px;">
-    <input id="flavourInput" type="text" name="flavour" placeholder="Enter flavour" required>
-      <datalist id="monsterFlavors">
-        <option>Monster Absolutely Zero</option>
-        <option>Monster M-80</option>
-        <option>Monster Khaos</option>
-        <option>Monster Ripper</option>
-        <option>Monster MIXXD</option>
-        <option>Monster Cuba-Lima</option>
-        <option>Monster Zero Ultra</option>
-        <option>Monster Ultra Red</option>
-        <option>Monster Ultra Blue</option>
-        <option>Monster Ultra Violet</option>
-        <option>Monster Ultra Citron</option>
-        <option>Monster Ultra Sunrise</option>
-        <option>Monster Ultra Black</option>
-        <option>Monster Ultra Paradise</option>
-        <option>Monster Ultra Fiesta</option>
-        <option>Monster Ultra Rosa</option>
-        <option>Monster Mango Loco</option>
-        <option>Monster Pacific Punch</option>
-        <option>Monster Pipeline Punch</option>
-        <option>Monster Lewis Hamilton 44</option>
-        <option>Monster The Doctor VR46</option>
-        <option>Monster Gronk</option>
-        <option>Monster Nitro Super Dry</option>
-        <option>Monster Nitro Killer B</option>
-        <option>Monster Nitro Anti-Gravity</option>
-        <option>Monster Nitro Black Ice</option>
-        <option>Monster Ballers Blend</option>
-        <option>Monster Mad Dog</option>
-        <option>Monster Rehab Lemonade</option>
-        <option>Monster Rehab Orangeade</option>
-        <option>Monster Rehab Peach Tea</option>
-        <option>Monster Rehab Pink Lemonade</option>
-        <option>Monster Rehab Rojo Tea</option>
-        <option>Monster Rehab Green Tea</option>
-        <option>Monster Rehab Protean</option>
-        <option>Monster Energy Assault</option>
-        <option>Monster Energy Fury</option>
-        <option>Monster Cuba-Libre</option>
-        <option>Monster Energy Unleaded</option>
-        <option>Monster Ghost M-100</option>
-        <option>Monster Phantom M-100</option>
-        <option>Monster Energy Heavy Metal</option>
-        <option>Monster Juiced Khaotic</option>
-        <option>Monster Juiced Khaotic (Tropical Orange)</option>
-        <option>Monster Juiced Mango Loco</option>
-        <option>Monster Juiced Papillon</option>
-        <option>Monster Juiced Monarch</option>
-        <option>Monster Juiced Aussie Style Lemonade</option>
-        <option>Monster Juiced Rio Punch</option>
-        <option>Monster Reserve White Pineapple</option>
-        <option>Monster Reserve Watermelon</option>
-        <option>Monster Reserve Orange Dreamsicle</option>
-        <option>Monster Reserve Peaches N Crème</option>
-        <option>Monster Reserve Kiwi Strawberry</option>
-        <option>Monster Java Mean Bean</option>
-        <option>Monster Java Loca Moca</option>
-        <option>Monster Java Salted Caramel</option>
-        <option>Monster Java Irish Blend</option>
-        <option>Monster Java Café Latte</option>
-        <option>Monster Java Swiss Chocolate</option>
-        <option>Monster Java French Vanilla</option>
-        <option>Monster Java Cold Brew Latte</option>
-        <option>Monster Java Cold Brew Sweet Black</option>
-        <option>Monster Java Café Mocha</option>
-        <option>Monster Java Kona Blend</option>
-        <option>Monster Java Big Black</option>
-        <option>Monster Java Farmers Oats</option>
-        <option>Monster Java Oatmilk Mocha</option>
-        <option>Monster Java Oatmilk Latte</option>
-        <option>Monster Energy Import</option>
-        <option>Monster Energy DUB Edition</option>
-        <option>Monster Energy Black Ice</option>
-        <option>Monster Energy Black</option>
-        <option>Monster Energy Green</option>
-        <option>Monster Energy White</option>
-        <option>Monster Energy Pink</option>
-        <option>Monster Energy Blue</option>
-        <option>Monster Energy Red</option>
-        <option>Monster Energy Gold</option>
-        <option>Monster Energy Ultra Fiesta Mango</option>
-        <option>Monster Energy Ultra Watermelon</option>
-        <option>Monster Energy Ultra Peachy Keen</option>
-        <option>Monster Energy Ultra Strawberry Dreams</option>
-        <option>Monster Energy Ultra Blue Hawaii</option>
-        <option>Monster Energy Ultra Black Cherry</option>
-        <option>Monster Energy Ultra White Pineapple</option>
-        <option>Monster Energy Ultra Kiwi Lime</option>
-        <option>Monster Energy Ultra Dragonfruit</option>
-        <option>Monster Energy Ultra Green Apple</option>
-        <option>Monster Energy Ultra Lemon Ice</option>
-        <option>Monster Energy Ultra Grape</option>
-        <option>Monster Energy Ultra Lychee</option>
-        <option>Monster Energy Ultra Yuzu</option>
-        <option>Monster Energy Ultra Sakura</option>
-        <option>Monster Energy Ultra Violet Storm</option>
-        <option>Monster Energy Ultra Galaxy</option>
-        <option>Monster Energy Ultra Nova</option>
-        <option>Monster Energy Ultra Eclipse</option>
-        <option>Monster Energy Ultra Cosmic</option>
-        <option>Monster Energy Ultra Moonlight</option>
-        <option>Monster Energy Ultra Arctic</option>
-        <option>Monster Energy Ultra Frost</option>
-        <option>Monster Energy Ultra Chill</option>
-        <option>Monster Energy Ultra Ice</option>
-        <option>Monster Energy Aussie Style Lemonade</option>
-        <option>Monster Energy Lewis Hamilton Zero Sugar</option>
-        <option>Monster Energy Nitro Cosmic Peach</option>
-        <option>Monster Energy Nitro Cosmic Berry</option>
-        <option>Monster Energy Nitro Cosmic Cherry</option>
-        <option>Monster Energy Nitro Cosmic Citrus</option>
-        <option>Monster Energy Nitro Cosmic Lime</option>
-        <option>Monster Energy Nitro Cosmic Grape</option>
-        <option>Monster Energy Nitro Cosmic Orange</option>
-        <option>Monster Energy Nitro Cosmic Strawberry</option>
-        <option>Monster Energy Nitro Cosmic Watermelon</option>
-        <option>Monster Energy Nitro Cosmic Kiwi</option>
-        <option>Monster Energy Nitro Cosmic Pineapple</option>
-        <option>Monster Energy Nitro Cosmic Mango</option>
-        <option>Monster Energy Nitro Cosmic Passionfruit</option>
-        <option>Monster Energy Nitro Cosmic Dragonfruit</option>
-        <option>Monster Energy Nitro Cosmic Lychee</option>
-        <option>Monster Energy Nitro Cosmic Yuzu</option>
-        <option>Monster Energy Nitro Cosmic Apple</option>
-        <option>Monster Energy Nitro Cosmic Cherry Limeade</option>
-        <option>Monster Energy Nitro Cosmic Berry Lemonade</option>
-        <option>Monster Energy Nitro Cosmic Citrus Punch</option>
-        <option>Monster Energy Nitro Cosmic Fruit Punch</option>
-        <option>Monster Energy Nitro Cosmic Tropical Punch</option>
-        <option>Monster Energy Nitro Cosmic Blue Raspberry</option>
-        <option>Monster Energy Nitro Cosmic Cotton Candy</option>
-        <option>Monster Energy Nitro Cosmic Bubblegum</option>
-        <option>Monster Energy Nitro Cosmic Marshmallow</option>
-        <option>Monster Energy Nitro Cosmic Birthday Cake</option>
-        <option>Monster Energy Nitro Cosmic Candy Corn</option>
-      </datalist>
+    <input id="myInput" type="text" name="myCountry" placeholder="Monster">
   </div>
+  <input type="submit">
 </form>
 
-
-
-
-
-<!-- <script>
+<script>
 function autocomplete(inp, arr) {
-  let currentFocus;
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
   inp.addEventListener("input", function(e) {
-    let a, b, i, val = this.value;
-    closeAllLists();
-    if (!val) return false;
-    currentFocus = -1;
+      var a, b, i, val = this.value;
+      /*close any already open lists of autocompleted values*/
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      /*create a DIV element that will contain the items (values):*/
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      /*append the DIV element as a child of the autocomplete container:*/
+      this.parentNode.appendChild(a);
+      /*for each item in the array...*/
+      for (i = 0; i < arr.length; i++) {
+        if (arr[i].toUpperCase().includes(val.toUpperCase())) {
+          b = document.createElement("DIV");
 
-    a = document.createElement("DIV");
-    a.setAttribute("id", this.id + "autocomplete-list");
-    a.setAttribute("class", "autocomplete-items");
-    this.parentNode.appendChild(a);
+          // Escape the input for regex use
+          const safeVal = val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const regex = new RegExp(safeVal, "ig");
 
-    for (i = 0; i < arr.length; i++) {
-      if (arr[i].toLowerCase().includes(val.toLowerCase())) {
-        b = document.createElement("DIV");
-        b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-        b.innerHTML += arr[i].substr(val.length);
-        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-        b.addEventListener("click", function(e) {
-          inp.value = this.getElementsByTagName("input")[0].value;
-          closeAllLists();
-        });
-        a.appendChild(b);
+          // Replace matched keyword with bolded text
+          b.innerHTML = arr[i].replace(regex, (match) => "<strong>" + match + "</strong>");
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+
+          b.addEventListener("click", function(e) {
+            inp.value = this.getElementsByTagName("input")[0].value;
+            closeAllLists();
+          });
+
+          a.appendChild(b);
+        }
       }
-    }
   });
-
-  function closeAllLists(elmnt) {
-    const items = document.getElementsByClassName("autocomplete-items");
-    for (let i = 0; i < items.length; i++) {
-      if (elmnt != items[i] && elmnt != inp) items[i].parentNode.removeChild(items[i]);
+  /*execute a function presses a key on the keyboard:*/
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        /*If the arrow DOWN key is pressed,
+        increase the currentFocus variable:*/
+        currentFocus++;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 38) { //up
+        /*If the arrow UP key is pressed,
+        decrease the currentFocus variable:*/
+        currentFocus--;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        e.preventDefault();
+        if (currentFocus > -1) {
+          /*and simulate a click on the "active" item:*/
+          if (x) x[currentFocus].click();
+        }
+      }
+  });
+  function addActive(x) {
+    /*a function to classify an item as "active":*/
+    if (!x) return false;
+    /*start by removing the "active" class on all items:*/
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    /*add class "autocomplete-active":*/
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
     }
   }
-
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  /*execute a function when someone clicks in the document:*/
   document.addEventListener("click", function (e) {
-    closeAllLists(e.target);
+      closeAllLists(e.target);
   });
 }
 
-fetch("/stats")
-  .then(response => response.json())
-  .then(data => autocomplete(document.getElementById("flavourInput"), data));
+/*An array containing all the country names in the world:*/
+// var monsterFlavours = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua & Barbuda","Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia","Bosnia & Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Cayman Islands","Central Arfrican Republic","Chad","Chile","China","Colombia","Congo","Cook Islands","Costa Rica","Cote D Ivoire","Croatia","Cuba","Curacao","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Ethiopia","Falkland Islands","Faroe Islands","Fiji","Finland","France","French Polynesia","French West Indies","Gabon","Gambia","Georgia","Germany","Ghana","Gibraltar","Greece","Greenland","Grenada","Guam","Guatemala","Guernsey","Guinea","Guinea Bissau","Guyana","Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Isle of Man","Israel","Italy","Jamaica","Japan","Jersey","Jordan","Kazakhstan","Kenya","Kiribati","Kosovo","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Macau","Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Myanmar","Namibia","Nauro","Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","North Korea","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Pierre & Miquelon","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","St Kitts & Nevis","St Lucia","St Vincent","Sudan","Suriname","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor L'Este","Togo","Tonga","Trinidad & Tobago","Tunisia","Turkey","Turkmenistan","Turks & Caicos","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States of America","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Virgin Islands (US)","Yemen","Zambia","Zimbabwe"];
+var monsterFlavours = ['Monster Absolutely Zero','Monster M-80',  'Monster Khaos',  'Monster Ripper',  'Monster MIXXD',
+  'Monster Zero Ultra',
+  'Monster Ultra Red',
+  'Monster Ultra Blue',
+  'Monster Ultra Violet',
+  'Monster Ultra Citron',
+  'Monster Ultra Sunrise',
+  'Monster Ultra Black',
+  'Monster Ultra Paradise',
+  'Monster Ultra Fiesta',
+  'Monster Ultra Rosa',
+  'Monster Mango Loco',
+  'Monster Pacific Punch',
+  'Monster Pipeline Punch',
+  'Monster Lewis Hamilton 44',
+  'Monster The Doctor VR46',
+  'Monster Gronk',
+  'Monster Nitro Super Dry',
+  'Monster Nitro Killer B',
+  'Monster Nitro Anti-Gravity',
+  'Monster Nitro Black Ice',
+  'Monster Ballers Blend',
+  'Monster Mad Dog',
+  'Monster Rehab Lemonade',
+  'Monster Rehab Orangeade',
+  'Monster Rehab Peach Tea',
+  'Monster Rehab Pink Lemonade',
+  'Monster Rehab Rojo Tea',
+  'Monster Rehab Green Tea',
+  'Monster Rehab Protean',
+  'Monster Energy Assault',
+  'Monster Energy Fury',
+  'Monster Cuba-Libre',
+  'Monster Energy Unleaded',
+  'Monster Ghost M-100',
+  'Monster Phantom M-100',
+  'Monster Energy Heavy Metal',
+  'Monster Juiced Khaotic',
+  'Monster Juiced Khaotic (Tropical Orange)',
+  'Monster Juiced Mango Loco',
+  'Monster Juiced Papillon',
+  'Monster Juiced Monarch',
+  'Monster Juiced Aussie Style Lemonade',
+  'Monster Juiced Rio Punch',
+  'Monster Reserve White Pineapple',
+  'Monster Reserve Watermelon',
+  'Monster Reserve Orange Dreamsicle',
+  'Monster Reserve Peaches N Crème',
+  'Monster Reserve Kiwi Strawberry',
+  'Monster Java Mean Bean',
+  'Monster Java Loca Moca',
+  'Monster Java Salted Caramel',
+  'Monster Java Irish Blend',
+  'Monster Java Café Latte',
+  'Monster Java Swiss Chocolate',
+  'Monster Java French Vanilla',
+  'Monster Java Cold Brew Latte',
+  'Monster Java Cold Brew Sweet Black',
+  'Monster Java Café Mocha',
+  'Monster Java Kona Blend',
+  'Monster Java Big Black',
+  'Monster Java Farmers Oats',
+  'Monster Java Oatmilk Mocha',
+  'Monster Java Oatmilk Latte',
+  'Monster Energy Import',
+  'Monster Energy DUB Edition',
+  'Monster Energy Black Ice',
+  'Monster Energy Black',
+  'Monster Energy Green',
+  'Monster Energy White',
+  'Monster Energy Pink',
+  'Monster Energy Blue',
+  'Monster Energy Red',
+  'Monster Energy Gold',
+  'Monster Energy Ultra Fiesta Mango',
+  'Monster Energy Ultra Watermelon',
+  'Monster Energy Ultra Peachy Keen',
+  'Monster Energy Ultra Strawberry Dreams',
+  'Monster Energy Ultra Blue Hawaii',
+  'Monster Energy Ultra Black Cherry',
+  'Monster Energy Ultra White Pineapple',
+  'Monster Energy Ultra Kiwi Lime',
+  'Monster Energy Ultra Dragonfruit',
+  'Monster Energy Ultra Green Apple',
+  'Monster Energy Ultra Lemon Ice',
+  'Monster Energy Ultra Grape',
+  'Monster Energy Ultra Lychee',
+  'Monster Energy Ultra Yuzu',
+  'Monster Energy Ultra Sakura',
+  'Monster Energy Ultra Violet Storm',
+  'Monster Energy Ultra Galaxy',
+  'Monster Energy Ultra Nova',
+  'Monster Energy Ultra Eclipse',
+  'Monster Energy Ultra Cosmic',
+  'Monster Energy Ultra Moonlight',
+  'Monster Energy Ultra Arctic',
+  'Monster Energy Ultra Frost',
+  'Monster Energy Ultra Chill',
+  'Monster Energy Ultra Ice',
+  'Monster Energy Aussie Style Lemonade',
+  'Monster Energy Lewis Hamilton Zero Sugar',
+  'Monster Energy Nitro Cosmic Peach',
+  'Monster Energy Nitro Cosmic Berry',
+  'Monster Energy Nitro Cosmic Cherry',
+  'Monster Energy Nitro Cosmic Citrus',
+  'Monster Energy Nitro Cosmic Lime',
+  'Monster Energy Nitro Cosmic Grape',
+  'Monster Energy Nitro Cosmic Orange',
+  'Monster Energy Nitro Cosmic Strawberry',
+  'Monster Energy Nitro Cosmic Watermelon',
+  'Monster Energy Nitro Cosmic Kiwi',
+  'Monster Energy Nitro Cosmic Pineapple',
+  'Monster Energy Nitro Cosmic Mango',
+  'Monster Energy Nitro Cosmic Passionfruit',
+  'Monster Energy Nitro Cosmic Dragonfruit',
+  'Monster Energy Nitro Cosmic Lychee',
+  'Monster Energy Nitro Cosmic Yuzu',
+  'Monster Energy Nitro Cosmic Apple',
+  'Monster Energy Nitro Cosmic Cherry Limeade',
+  'Monster Energy Nitro Cosmic Berry Lemonade',
+  'Monster Energy Nitro Cosmic Citrus Punch',
+  'Monster Energy Nitro Cosmic Fruit Punch',
+  'Monster Energy Nitro Cosmic Tropical Punch',
+  'Monster Energy Nitro Cosmic Blue Raspberry',
+  'Monster Energy Nitro Cosmic Cotton Candy',
+  'Monster Energy Nitro Cosmic Bubblegum',
+  'Monster Energy Nitro Cosmic Marshmallow',
+  'Monster Energy Nitro Cosmic Birthday Cake',
+  'Monster Energy Nitro Cosmic Candy Corn',
+];
+
+/*initiate the autocomplete function on the "myInput" element, and pass along the monsterFlavours array as possible autocomplete values:*/
+autocomplete(document.getElementById("myInput"), monsterFlavours);
 </script>
 
 </body>
-</html> -->
+</html>
