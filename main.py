@@ -1,16 +1,17 @@
+
 import sqlite3
-from flask import Flask, render_template, request, session, redirect, flash, jsonify
+from flask import Flask, render_template, request, session, redirect, flash, jsonify, url_for
 import db
 from werkzeug.exceptions import abort
-from flask import Flask
-
+from flask_compress import Compress
 
 app = Flask(__name__)
+Compress(app)
 app.secret_key = "munt"
 
 @app.route("/")
 def Home():
-    conn = sqlite3.connect('flavors.db')  # Make sure this path is correct
+    conn = sqlite3.connect('.database/flavors.db')  # Make sure this path is correct
     conn.row_factory = sqlite3.Row  # To access rows like dicts
     cursor = conn.cursor()
 
@@ -26,10 +27,12 @@ def Home():
 
 
 @app.route('/add', methods=['GET', 'POST'])
-def add_drink():
+def add():
+    flavour = request.form.get('flavour')
+
     if request.method == 'POST':
         flavour = request.form['flavour']
-        conn = sqlite3.connect('flavors.db')
+        conn = sqlite3.connect('.database/flavors.db')
         cursor = conn.cursor()
         # Increment totalDrinks and update totalCaffeine
         cursor.execute("""
@@ -46,9 +49,11 @@ def add_drink():
 
 @app.route('/stats')
 def stats():
-    conn = sqlite3.connect('flavors.db')
+    conn = sqlite3.connect('.database/flavors.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
+    
+    
 
     cursor.execute("""
         SELECT flavour, totalDrinks, totalCaffeine

@@ -9,7 +9,7 @@ def GetDB():
 
     return db
 
-def GetAllReviews():
+def get():
 
     # Connect, query all guesses and then return the data
     db = GetDB()
@@ -34,7 +34,7 @@ def addDrink(flavour):
                 SET 
                     totalDrinks = totalDrinks + 1, totalCaffeine = caffeine * (totalDrinks + 1)
                 WHERE 
-                    flavour = 'Your Flavour Name';""")
+                    flavour = addedFlavour;""")
     db.commit()
     return True
 
