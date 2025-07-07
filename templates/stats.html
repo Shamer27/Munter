@@ -21,16 +21,15 @@
       </tr>
     </thead>
     <tbody>
-      {% for flavour in flavours %}
+      {% for loggedDrink in flavours %}
         <tr>
-          <td>{{ flavour.flavour }}</td>
-          <td>{{ flavour.totalDrinks }}</td>
-          <td>{{ flavour.totalCaffeine }}</td>
+          <td>{{ loggedDrink.flavour }}</td>
+          <td>{{ loggedDrink.totalDrinks }}</td>
+          <td>{{ loggedDrink.totalCaffeine }}</td>
         </tr>
-      
+      {% endfor %}
     </tbody>
-  </table>
-  {% endfor %}
+    </table>
   </body>
   </html>
 

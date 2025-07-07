@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Flavour Rankings</h2>
+
+  {% for flavour, total in ranks %}
+    <div class="card">
+      <h3>{{ flavour }}</h3>
+      <p>Total Drinks: {{ totalDrinks }}</p>
+    </div>
+  {% else %}
+    <p>No drinks logged yet.</p>
+  {% endfor %}
+{% endblock %}

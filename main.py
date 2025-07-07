@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, session, redirect, flash, jso
 import db
 from werkzeug.exceptions import abort
 from flask_compress import Compress
+from db import getAllFlavours, addDrink, getLoggedFlavours
 
 app = Flask(__name__)
 Compress(app)
@@ -47,11 +48,12 @@ def add():
 
     return render_template('add.html') 
 
-@app.route('/stats')
+@app.route("/stats")
 def stats():
     conn = sqlite3.connect('.database/flavors.db')
-    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
+    flavours = getLoggedFlavours()  # Only those with totalDrinks > 0
+
     
     
 
@@ -62,7 +64,26 @@ def stats():
     """)
     stats_data = cursor.fetchall()
     conn.close()
+    
+    return render_template("stats.html", flavours=flavours)
 
     return render_template("stats.html", flavours=stats_data)
+
+@app.route('/ranks')
+def ranks():
+    conn = sqlite3.connect('.database/flavors.db')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT flavour, COUNT(*) as total
+        FROM flavours
+        WHERE totalDrinks > 0
+        GROUP BY flavour
+        ORDER BY totalDrinks DESC
+    """)
+    ranks = cursor.fetchall()  # List of (flavour, total)
+
+    conn.close()
+    return render_template('ranks.html', ranks=ranks)
 
 app.run(debug=True, port=5000)

@@ -5,7 +5,8 @@
 
 <div class="container">
 
-    <h1>Welcome to YouReview. </h1>
+    <h1>Welcome to Monster Hunter,
+        AKA Munter </h1>
 
 </div>
 
@@ -15,14 +16,26 @@
 <body>
 
 
-    <div class="reviews-container">
+    <div class="home-drinks-container">
             <h2>Logged Drinks</h2>
-            <ul>
-            {% for flavour in flavours %}
-                <li>
-                {{ flavour.flavour }} - {{ flavour.totalDrinks }} drink(s) - {{ flavour.totalCaffeine }} mg caffeine
-                </li>
-            {% endfor %}
+            <table>
+                <thead>
+                <tr>
+                    <th style="width: 70%">Flavour</th>
+                    <th style="width: 15%">Drinks</th>
+                    <th style="width: 15%">Caffeine (mg)</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for loggedDrink in flavours %}
+                    <tr>
+                    <td>{{ loggedDrink.flavour }}</td>
+                    <td>{{ loggedDrink.totalDrinks }}</td>
+                    <td>{{ loggedDrink.totalCaffeine }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                </table>
             </ul>
 
     </div>

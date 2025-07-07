@@ -9,12 +9,8 @@ def GetDB():
 
     return db
 
-def get():
-
-    # Connect, query all guesses and then return the data
+def getAllFlavours():
     db = GetDB()
-    flavors = db.execute("""SELECT flavours.flavour, flavours.caffeine, flavours.size, flavours.totalCaffeine, flavours.totalDrinks FROM flavours
-                         ORDER BY totalDrinks DESC""").fetchall()
     flavors = db.execute("SELECT * FROM flavours").fetchall()
     db.close()
     return flavors
@@ -38,10 +34,13 @@ def addDrink(flavour):
     db.commit()
     return True
 
-def getSingleReview(id):
-
+def getLoggedFlavours():
     db = GetDB()
-    flavour = db.execute(f"SELECT * FROM flavour WHERE id={id}").fetchone()
+    logged = db.execute("""
+        SELECT flavour, caffeine, size, totalCaffeine, totalDrinks
+        FROM flavours
+        WHERE totalDrinks > 0
+        ORDER BY totalDrinks DESC
+    """).fetchall()
     db.close()
-
-    return flavour
+    return logged
