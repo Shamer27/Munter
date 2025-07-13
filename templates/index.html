@@ -12,35 +12,44 @@
 
 <br>
 
-
+<div class="centering">
 <body>
 
 
-    <div class="home-drinks-container">
-            <h2>Logged Drinks</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th style="width: 70%">Flavour</th>
-                    <th style="width: 15%">Drinks</th>
-                    <th style="width: 15%">Caffeine (mg)</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for loggedDrink in flavours %}
-                    <tr>
-                    <td>{{ loggedDrink.flavour }}</td>
-                    <td>{{ loggedDrink.totalDrinks }}</td>
-                    <td>{{ loggedDrink.totalCaffeine }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-                </table>
-            </ul>
+<div class="centering">
+  <div class="home-drinks-container" style="overflow-x: auto;">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 70%">Flavour</th>
+          <th style="width: 15%">Drinks</th>
+          <th style="width: 15%">Caffeine</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loggedDrink in flavours %}
+          <tr>
+            <td>{{ loggedDrink.flavour }}</td>
+            <td>{{ loggedDrink.totalDrinks }}</td>
+            <td>
+                {% if loggedDrink.totalCaffeine >= 1000000 %}
+                  {{ (loggedDrink.totalCaffeine / 1000000) | round(2) }} kg
+                {% elif loggedDrink.totalCaffeine >= 1000 %}
+                  {{ (loggedDrink.totalCaffeine / 1000) | round(2) }} g
+                {% else %}
+                  {{ loggedDrink.totalCaffeine }} mg
+                {% endif %}
 
-    </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
 
 </body>
+
 
 {% endblock %}

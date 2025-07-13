@@ -1,0 +1,30 @@
+import pytest
+from flask import Flask
+from flask.testing import FlaskClient
+
+# Assume your Flask app is created in app.py as 'app'
+from app import app
+
+@pytest.fixture
+def client():
+  app.config['TESTING'] = True
+  with app.test_client() as client:
+    yield client
+
+def test_stats_page_renders(client: FlaskClient):
+  # Simulate login or any required setup if needed
+  response = client.get('/stats')
+  assert response.status_code == 200
+  html = response.data.decode('utf-8')
+  assert '<h1>Flavour Statistics</h1>' in html
+  assert '<canvas id="flavourPieChart"></canvas>' in html
+  assert 'Your total drinks:' in html
+  assert '<table>' in html
+
+def test_stats_context_variables(client: FlaskClient):
+  response = client.get('/stats')
+  html = response.data.decode('utf-8')
+  # Check for at least one flavour row (assuming test DB has data)
+  assert 'Flavour' in html
+  assert 'Drinks' in html
+  assert 'Caffeine (mg)' in html

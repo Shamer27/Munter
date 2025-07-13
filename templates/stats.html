@@ -2,35 +2,57 @@
 
 {% block content %}
 
-  <!-- Allows users to scroll for smaller screens -->
+<h1>Flavour Statistics</h1>
 
-
-  <!-- Displays the table next to the image if space is avaliable, can be scrolled for smaller screens -->
-  <div style="display: inline-block; max-width: 100%; overflow-x: auto;">
-  </head>
-  <body>
-
-  <h1>Flavour Statistics</h1>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Flavour</th>
-        <th>Total Drinks</th>
-        <th>Total Caffeine (mg)</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for loggedDrink in flavours %}
+<div class="centering">
+  <div class="home-drinks-container" style="overflow-x: auto;">
+    <table>
+      <thead>
         <tr>
-          <td>{{ loggedDrink.flavour }}</td>
-          <td>{{ loggedDrink.totalDrinks }}</td>
-          <td>{{ loggedDrink.totalCaffeine }}</td>
+          <th style="width: 70%">Flavour</th>
+          <th style="width: 15%">Drinks</th>
+          <th style="width: 15%">Caffeine</th>
         </tr>
-      {% endfor %}
-    </tbody>
+      </thead>
+      <tbody>
+        {% for loggedDrink in flavours %}
+          <tr>
+            <td>{{ loggedDrink.flavour }}</td>
+            <td>{{ loggedDrink.totalDrinks }}</td>
+            <td>
+                {% if loggedDrink.totalCaffeine >= 1000000 %}
+                  {{ (loggedDrink.totalCaffeine / 1000000) | round(2) }} kg
+                {% elif loggedDrink.totalCaffeine >= 1000 %}
+                  {{ (loggedDrink.totalCaffeine / 1000) | round(2) }} g
+                {% else %}
+                  {{ loggedDrink.totalCaffeine }} mg
+                {% endif %}
+
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
-  </body>
-  </html>
+  </div>
+</div>
+
+<div class="centering">
+  {% if total_value >= 1000000 %}
+    <p>Your total volume: {{ (total_value / 1000000)|round(2) }} kL</p>
+  {% elif total_value >= 1000 %}
+    <p>Your total volume: {{ (total_value / 1000)|round(2) }} L</p>
+  {% else %}
+    <p>Your total volume: {{ total_value }} mL</p>
+  {% endif %}
+</div>
+
+<div class="centering">
+  <p>Your total drinks: {{ total_drinks }}</p>
+</div>
+
+<div class="centering">
+  <h3>Drink Distribution</h3>
+  <img src="{{ pie_chart }}" alt="Pie Chart of Flavours" style="max-width: 400px;">
+</div>
 
 {% endblock %}

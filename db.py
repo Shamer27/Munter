@@ -31,8 +31,7 @@ def addDrink(flavour):
                     totalDrinks = totalDrinks + 1, totalCaffeine = caffeine * (totalDrinks + 1)
                 WHERE 
                     flavour = addedFlavour;""")
-    db.commit()
-    return True
+    return True, addedFlavour
 
 def getLoggedFlavours():
     db = GetDB()

@@ -1,72 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
+
+{% block content %}
 <style>
-* {
-  box-sizing: border-box;
-}
 
-body {
-  font: 16px Arial;  
-  background-color: #0d1b2a;
-}
-
-/*the container must be positioned relative:*/
-.autocomplete {
-  position: relative;
-  display: inline-block;
-  background-color: #0d1b2a;
-}
-
-input {
-  border: 1px solid transparent;
-  background-color: #0d1b2a;
-  color: #E0E1DD;
-  padding: 10px;
-  font-size: 16px;
-}
-
-input[type=text] {
-  background-color: #0d1b2a;
-  width: 100%;
-}
-
-input[type=submit] {
-  background-color: DodgerBlue;
-  color: #0d1b2a;
-  cursor: pointer;
-}
-
-.autocomplete-items {
-  position: absolute;
-  border: 1px solid #0d1b2a;
-  border-bottom: none;
-  border-top: none;
-  z-index: 99;
-  /*position the autocomplete items to be the same width as the container:*/
-  top: 100%;
-  left: 0;
-  right: 0;
-}
-
-.autocomplete-items div {
-  padding: 10px;
-  cursor: pointer;
-  background-color: #fff; 
-  border-bottom: 1px solid #d4d4d4; 
-}
-
-/*when hovering an item:*/
-.autocomplete-items div:hover {
-  background-color: #e9e9e9; 
-}
-
-/*when navigating through the items using the arrow keys:*/
-.autocomplete-active {
-  background-color: DodgerBlue !important; 
-  color: #0d1b2a; 
-}
 </style>
 </head>     
 <body class="page">
@@ -74,11 +10,11 @@ input[type=submit] {
 <h2>Add A drink</h2>
 
 <!--Make sure the form has the autocomplete function switched off:-->
-<form method="POST" action="/add">
+<form method="POST" action="/add" autocomplete="off">
   <div class="autocomplete" style="width:300px;">
-    <input id="addedFlavour" type="text" name="flavour" placeholder="Monster">
+    <input id="addedFlavour" name="flavour" type="text" class="input-box" placeholder="Flavour" required />
   </div>
-  <input type="submit">
+  <input type="submit" value="Add Drink" class="nav-button" />
 </form>
 
 <script>
@@ -179,142 +115,144 @@ function autocomplete(inp, arr) {
 
 
 // Your flavours array (example subset for brevity)
-var monsterFlavours = ['Monster Absolutely Zero','Monster M-80',  'Monster Khaos',  'Monster Ripper',  'Monster MIXXD',
-  'Monster Zero Ultra',
-  'Monster Ultra Red',
-  'Monster Ultra Blue',
-  'Monster Ultra Violet',
-  'Monster Ultra Citron',
-  'Monster Ultra Sunrise',
-  'Monster Ultra Black',
-  'Monster Ultra Paradise',
-  'Monster Ultra Fiesta',
-  'Monster Ultra Rosa',
-  'Monster Mango Loco',
-  'Monster Pacific Punch',
-  'Monster Pipeline Punch',
-  'Monster Lewis Hamilton 44',
-  'Monster The Doctor VR46',
-  'Monster Gronk',
-  'Monster Nitro Super Dry',
-  'Monster Nitro Killer B',
-  'Monster Nitro Anti-Gravity',
-  'Monster Nitro Black Ice',
-  'Monster Ballers Blend',
-  'Monster Mad Dog',
-  'Monster Rehab Lemonade',
-  'Monster Rehab Orangeade',
-  'Monster Rehab Peach Tea',
-  'Monster Rehab Pink Lemonade',
-  'Monster Rehab Rojo Tea',
-  'Monster Rehab Green Tea',
-  'Monster Rehab Protean',
-  'Monster Energy Assault',
-  'Monster Energy Fury',
-  'Monster Cuba-Libre',
-  'Monster Energy Unleaded',
-  'Monster Ghost M-100',
-  'Monster Phantom M-100',
-  'Monster Energy Heavy Metal',
-  'Monster Juiced Khaotic',
-  'Monster Juiced Khaotic (Tropical Orange)',
-  'Monster Juiced Mango Loco',
-  'Monster Juiced Papillon',
-  'Monster Juiced Monarch',
-  'Monster Juiced Aussie Style Lemonade',
-  'Monster Juiced Rio Punch',
-  'Monster Reserve White Pineapple',
-  'Monster Reserve Watermelon',
-  'Monster Reserve Orange Dreamsicle',
-  'Monster Reserve Peaches N Crème',
-  'Monster Reserve Kiwi Strawberry',
-  'Monster Java Mean Bean',
-  'Monster Java Loca Moca',
-  'Monster Java Salted Caramel',
-  'Monster Java Irish Blend',
-  'Monster Java Café Latte',
-  'Monster Java Swiss Chocolate',
-  'Monster Java French Vanilla',
-  'Monster Java Cold Brew Latte',
-  'Monster Java Cold Brew Sweet Black',
-  'Monster Java Café Mocha',
-  'Monster Java Kona Blend',
-  'Monster Java Big Black',
-  'Monster Java Farmers Oats',
-  'Monster Java Oatmilk Mocha',
-  'Monster Java Oatmilk Latte',
-  'Monster Energy Import',
-  'Monster Energy DUB Edition',
-  'Monster Energy Black Ice',
-  'Monster Energy Black',
-  'Monster Energy Green',
-  'Monster Energy White',
-  'Monster Energy Pink',
-  'Monster Energy Blue',
-  'Monster Energy Red',
-  'Monster Energy Gold',
-  'Monster Energy Ultra Fiesta Mango',
-  'Monster Energy Ultra Watermelon',
-  'Monster Energy Ultra Peachy Keen',
-  'Monster Energy Ultra Strawberry Dreams',
-  'Monster Energy Ultra Blue Hawaii',
-  'Monster Energy Ultra Black Cherry',
-  'Monster Energy Ultra White Pineapple',
-  'Monster Energy Ultra Kiwi Lime',
-  'Monster Energy Ultra Dragonfruit',
-  'Monster Energy Ultra Green Apple',
-  'Monster Energy Ultra Lemon Ice',
-  'Monster Energy Ultra Grape',
-  'Monster Energy Ultra Lychee',
-  'Monster Energy Ultra Yuzu',
-  'Monster Energy Ultra Sakura',
-  'Monster Energy Ultra Violet Storm',
-  'Monster Energy Ultra Galaxy',
-  'Monster Energy Ultra Nova',
-  'Monster Energy Ultra Eclipse',
-  'Monster Energy Ultra Cosmic',
-  'Monster Energy Ultra Moonlight',
-  'Monster Energy Ultra Arctic',
-  'Monster Energy Ultra Frost',
-  'Monster Energy Ultra Chill',
-  'Monster Energy Ultra Ice',
-  'Monster Energy Aussie Style Lemonade',
-  'Monster Energy Lewis Hamilton Zero Sugar',
-  'Monster Energy Nitro Cosmic Peach',
-  'Monster Energy Nitro Cosmic Berry',
-  'Monster Energy Nitro Cosmic Cherry',
-  'Monster Energy Nitro Cosmic Citrus',
-  'Monster Energy Nitro Cosmic Lime',
-  'Monster Energy Nitro Cosmic Grape',
-  'Monster Energy Nitro Cosmic Orange',
-  'Monster Energy Nitro Cosmic Strawberry',
-  'Monster Energy Nitro Cosmic Watermelon',
-  'Monster Energy Nitro Cosmic Kiwi',
-  'Monster Energy Nitro Cosmic Pineapple',
-  'Monster Energy Nitro Cosmic Mango',
-  'Monster Energy Nitro Cosmic Passionfruit',
-  'Monster Energy Nitro Cosmic Dragonfruit',
-  'Monster Energy Nitro Cosmic Lychee',
-  'Monster Energy Nitro Cosmic Yuzu',
-  'Monster Energy Nitro Cosmic Apple',
-  'Monster Energy Nitro Cosmic Cherry Limeade',
-  'Monster Energy Nitro Cosmic Berry Lemonade',
-  'Monster Energy Nitro Cosmic Citrus Punch',
-  'Monster Energy Nitro Cosmic Fruit Punch',
-  'Monster Energy Nitro Cosmic Tropical Punch',
-  'Monster Energy Nitro Cosmic Blue Raspberry',
-  'Monster Energy Nitro Cosmic Cotton Candy',
-  'Monster Energy Nitro Cosmic Bubblegum',
-  'Monster Energy Nitro Cosmic Marshmallow',
-  'Monster Energy Nitro Cosmic Birthday Cake',
-  'Monster Energy Nitro Cosmic Candy Corn',
+var Flavours = [' Absolutely Zero',' M-80',  ' Khaos',  ' Ripper',  ' MIXXD',
+  'Zero Ultra (white)',
+  'Ultra Red',
+  'Ultra Blue',
+  'Ultra Violet',
+  'Ultra Citron',
+  'Ultra Sunrise',
+  'Ultra Black',
+  'Ultra Paradise',
+  'Ultra Fiesta',
+  'Ultra Rosa',
+  'Mango Loco',
+  'Pacific Punch',
+  'Pipeline Punch',
+  'Lewis Hamilton 44',
+  'The Doctor VR46',
+  'Gronk',
+  'Nitro Super Dry',
+  'Nitro Killer B',
+  'Nitro Anti-Gravity',
+  'Nitro Black Ice',
+  'Ballers Blend',
+  'Mad Dog',
+  'Rehab Lemonade',
+  'Rehab Orangeade',
+  'Rehab Peach Tea',
+  'Rehab Pink Lemonade',
+  'Rehab Rojo Tea',
+  'Rehab Green Tea',
+  'Rehab Protean',
+  'Energy Assault',
+  'Energy Fury',
+  'Cuba-Libre',
+  'Energy Unleaded',
+  'Ghost M-100',
+  'Phantom M-100',
+  'Energy Heavy Metal',
+  'Juiced Khaotic',
+  'Juiced Khaotic (Tropical Orange)',
+  'Juiced Mango Loco',
+  'Juiced Papillon',
+  'Juiced Monarch',
+  'Juiced Aussie Style Lemonade',
+  'Juiced Rio Punch',
+  'Reserve White Pineapple',
+  'Reserve Watermelon',
+  'Reserve Orange Dreamsicle',
+  'Reserve Peaches N Crème',
+  'Reserve Kiwi Strawberry',
+  'Java Mean Bean',
+  'Java Loca Moca',
+  'Java Salted Caramel',
+  'Java Irish Blend',
+  'Java Café Latte',
+  'Java Swiss Chocolate',
+  'Java French Vanilla',
+  'Java Cold Brew Latte',
+  'Java Cold Brew Sweet Black',
+  'Java Café Mocha',
+  'Java Kona Blend',
+  'Java Big Black',
+  'Java Farmers Oats',
+  'Java Oatmilk Mocha',
+  'Java Oatmilk Latte',
+  'Energy Import',
+  'Energy DUB Edition',
+  'Energy Black Ice',
+  'Energy Black',
+  'Energy Green',
+  'Energy White',
+  'Energy Pink',
+  'Energy Blue',
+  'Energy Red',
+  'Energy Gold',
+  'Energy Ultra Fiesta Mango',
+  'Energy Ultra Watermelon',
+  'Energy Ultra Peachy Keen',
+  'Energy Ultra Strawberry Dreams',
+  'Energy Ultra Blue Hawaii',
+  'Energy Ultra Black Cherry',
+  'Energy Ultra White Pineapple',
+  'Energy Ultra Kiwi Lime',
+  'Energy Ultra Dragonfruit',
+  'Energy Ultra Green Apple',
+  'Energy Ultra Lemon Ice',
+  'Energy Ultra Grape',
+  'Energy Ultra Lychee',
+  'Energy Ultra Yuzu',
+  'Energy Ultra Sakura',
+  'Energy Ultra Violet Storm',
+  'Energy Ultra Galaxy',
+  'Energy Ultra Nova',
+  'Energy Ultra Eclipse',
+  'Energy Ultra Cosmic',
+  'Energy Ultra Moonlight',
+  'Energy Ultra Arctic',
+  'Energy Ultra Frost',
+  'Energy Ultra Chill',
+  'Energy Ultra Ice',
+  'Energy Aussie Style Lemonade',
+  'Energy Lewis Hamilton Zero Sugar',
+  'Energy Nitro Cosmic Peach',
+  'Energy Nitro Cosmic Berry',
+  'Energy Nitro Cosmic Cherry',
+  'Energy Nitro Cosmic Citrus',
+  'Energy Nitro Cosmic Lime',
+  'Energy Nitro Cosmic Grape',
+  'Energy Nitro Cosmic Orange',
+  'Energy Nitro Cosmic Strawberry',
+  'Energy Nitro Cosmic Watermelon',
+  'Energy Nitro Cosmic Kiwi',
+  'Energy Nitro Cosmic Pineapple',
+  'Energy Nitro Cosmic Mango',
+  'Energy Nitro Cosmic Passionfruit',
+  'Energy Nitro Cosmic Dragonfruit',
+  'Energy Nitro Cosmic Lychee',
+  'Energy Nitro Cosmic Yuzu',
+  'Energy Nitro Cosmic Apple',
+  'Energy Nitro Cosmic Cherry Limeade',
+  'Energy Nitro Cosmic Berry Lemonade',
+  'Energy Nitro Cosmic Citrus Punch',
+  'Energy Nitro Cosmic Fruit Punch',
+  'Energy Nitro Cosmic Tropical Punch',
+  'Energy Nitro Cosmic Blue Raspberry',
+  'Energy Nitro Cosmic Cotton Candy',
+  'Energy Nitro Cosmic Bubblegum',
+  'Energy Nitro Cosmic Marshmallow',
+  'Energy Nitro Cosmic Birthday Cake',
+  'Energy Nitro Cosmic Candy Corn',
 ];
 
 // Initialize autocomplete
-autocomplete(document.getElementById("addedFlavour"), monsterFlavours);
+autocomplete(document.getElementById("addedFlavour"), Flavours);
 </script>
 
 </body>
 </html>
+
+{% endblock %}
 
 

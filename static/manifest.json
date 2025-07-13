@@ -1,7 +1,7 @@
 {
-    "name": "YouReview",
-    "short_name": "URvw",
-    "start_url": "/",
+    "name": "Munter",
+    "short_name": "Munt",
+    "start_url": "/stats",
     "display": "standalone",
     "background_color": "#1abc9c",
     "theme_color": "#fdfdfd",
