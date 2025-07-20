@@ -1,5 +1,5 @@
 :root {
-  --background: #0D1B2A;
+  --background: #0B1B2A;
   --mid-navy: #1B263B;
   --steel-blue: #415A77;
   --sky-blue: #778DA9;
@@ -42,6 +42,21 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.piechart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem auto;
+}
+
+canvas#flavourPieChart {
+  width: 300px;
+  height: 300px;
+  max-width: 90vw;
+  max-height: 90vw;
+  display: block;
 }
 
 /* Navbar Buttons */
@@ -139,32 +154,32 @@ th-flavour {
 
 body {
   font: 16px Arial;  
-  background-color: #0d1b2a;
+  background-color: --background;
 }
 
 /*the container must be positioned relative:*/
 .autocomplete {
   position: relative;
   display: inline-block;
-  background-color: #0d1b2a;
+  background-color: --background;
 }
 
 input {
   border: 1px solid transparent;
-  background-color: #0d1b2a;
+  background-color: --background;
   color: #E0E1DD;
   padding: 10px;
   font-size: 16px;
 }
 
 input[type=text] {
-  background-color: #0d1b2a;
+  background-color: --background;
   width: 100%;
 }
 
 input[type=submit] {
   background-color: DodgerBlue;
-  color: #0d1b2a;
+  color: --background;
   cursor: pointer;
 }
 
@@ -174,6 +189,8 @@ input[type=submit] {
   flex-direction: column;
   margin-bottom: 16px;
   outline: oldlace;
+  background-color: var(--mid-navy);
+
   border-color: #778da9;
 }
 
@@ -181,7 +198,8 @@ input[type=submit] {
   position: absolute;
   border: 1px solid --light-gray;
   border-radius: 8px;
-  background-color: #fff;
+  color: var(--light-gray);
+  background-color: var(--mid-navy);
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   z-index: 99;
   top: 100%;
@@ -207,7 +225,7 @@ input[type=submit] {
 /*when navigating through the items using the arrow keys:*/
 .autocomplete-active {
   background-color: DodgerBlue !important; 
-  color: #0d1b2a; 
+  color: --background; 
 }
 
 .piechart-container {
@@ -216,5 +234,14 @@ input[type=submit] {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.addpageInfo {
+  background-color: var(--mid-navy);
+  color: var(--light-gray);
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-size: 14px;
 }
 }

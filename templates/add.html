@@ -7,14 +7,27 @@
 </head>     
 <body class="page">
 
-<h2>Add A drink</h2>
+
 
 <!--Make sure the form has the autocomplete function switched off:-->
 <form method="POST" action="/add" autocomplete="off">
-  <div class="autocomplete" style="width:300px;">
-    <input id="addedFlavour" name="flavour" type="text" class="input-box" placeholder="Flavour" required />
+  <div class="centering">
+
+    <div class="autocomplete" style="width:90%;">
+          <h2>Add A drink</h2>
+      <input id="addedFlavour" name="flavour" type="text" class="input-box" placeholder="Flavour" required />
+      <input type="submit" value="Add Drink" class="nav-button" style="background-color: #778DA9;" />
+    </div>
+
   </div>
-  <input type="submit" value="Add Drink" class="nav-button" />
+      <div class="addpageInfo">       
+        <h4>To log flavour, type it in the box above and click "Add Drink".</h4>
+    </div>
+    <div class="addpageInfo">
+        <h3>HEALTH WARNING</h3>
+          <h4>The recommended maximum daily intake is 400mg (approx 2.5 drinks) per day, 
+          and 200mg per serving (apprix 1.25 drinks) </>
+    </div>
 </form>
 
 <script>

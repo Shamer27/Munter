@@ -1,5 +1,6 @@
-{% extends "base.html" %}
 
+
+{% extends "base.html" %}
 {% block content %}
 
 <h1>Flavour Statistics</h1>
@@ -35,7 +36,7 @@
     </table>
   </div>
 </div>
-
+<br>
 <div class="centering">
   {% if total_value >= 1000000 %}
     <p>Your total volume: {{ (total_value / 1000000)|round(2) }} kL</p>
@@ -44,15 +45,83 @@
   {% else %}
     <p>Your total volume: {{ total_value }} mL</p>
   {% endif %}
+  <br>
+  
+</div>
+<div class="centering">
+  <p>Total drinks: {{ total_drinks }}</p>
 </div>
 
-<div class="centering">
-  <p>Your total drinks: {{ total_drinks }}</p>
-</div>
+{% if stats|length > 0 %}
+  <div class="piechart-container" style="width: 100%; max-width: 500px; margin: auto;">
+    <br>
+    <h2>Drink Distribution</h2>
+    <canvas id="flavourPieChart" width="400" height="400"></canvas>
+  </div>
 
-<div class="centering">
-  <h3>Drink Distribution</h3>
-  <img src="{{ pie_chart }}" alt="Pie Chart of Flavours" style="max-width: 400px;">
-</div>
+
+
+  <script id="stats-json" type="application/json">{{ stats | tojson }}</script>
+  <script id="colors-json" type="application/json">{{ colors | tojson }}</script>
+
+  <style>
+    .piechart-container {
+      max-width: 600px;
+      margin: auto;
+    }
+    #flavourPieChart {
+      width: 100%;
+      height: 400px;
+    }
+  </style>
+
+  <script src="{{ url_for('static', filename='js/chart.min.js') }}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const stats = JSON.parse(document.getElementById('stats-json').textContent);
+      const colors = JSON.parse(document.getElementById('colors-json').textContent);
+
+      const labels = stats.map(item => item.flavour);
+      const values = stats.map(item => item.totalDrinks);
+
+
+      const ctx = document.getElementById('flavourPieChart').getContext('2d');
+
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: colors
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const value = context.raw;
+                  const percent = ((value / total) * 100).toFixed(1);
+                  return `${context.label}: ${value} (${percent}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+  {% else %}
+  <div class="centering">
+    <p>No drinks logged yet to display a pie chart.</p>
+  </div>
+  {% endif %}
+
 
 {% endblock %}

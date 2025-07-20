@@ -15,7 +15,12 @@ def getAllFlavours():
     db.close()
     return flavors
 
-
+# def dict_factory(cursor, row):
+#     # Convert the row to a dictionary
+#     d = {}
+#     for idx, col in enumerate(cursor.description):
+#         d[col[0]] = row[idx]
+#     return d
 
 def addDrink(flavour):
    

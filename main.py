@@ -55,9 +55,6 @@ def add():
 
 @app.route('/stats')
 def stats():
-    import matplotlib.pyplot as plt
-    import io
-    import base64
     import sqlite3
     
     flavour_colors = {
@@ -198,6 +195,47 @@ def stats():
         'White': '#ffffff',
         'Zero Ultra (white)': '#ffffff'
     }
+
+    # conn = sqlite3.connect('./.database/flavors.db')
+    # conn.row_factory = sqlite3.Row
+    # cursor = conn.cursor()
+
+    # cursor.execute("""
+    #     SELECT flavour, totalDrinks, totalCaffeine
+    #     FROM flavours
+    #     WHERE totalDrinks > 0
+    #     ORDER BY totalDrinks DESC;
+    # """)
+    # results = cursor.fetchall()
+    # conn.close()
+
+    # total_value = sum(row['totalCaffeine'] for row in results)
+    # total_drinks = sum(row['totalDrinks'] for row in results)
+
+    # # Group for pie chart
+    # main_flavours = []
+    # other_drinks = 0
+
+    # for row in results:
+    #     if row['totalDrinks'] >= 3:
+    #         main_flavours.append({'flavour': row['flavour'], 'totalDrinks': row['totalDrinks']})
+    #     else:
+    #         other_drinks += row['totalDrinks']
+
+    # if other_drinks > 0:
+    #     main_flavours.append({'flavour': 'Other', 'totalDrinks': other_drinks})
+
+    # # Data for JS
+    # labels = [item['flavour'] for item in main_flavours]
+    # values = [item['totalDrinks'] for item in main_flavours]
+    # colors = [flavour_colors.get(label, '#888888') for label in labels]
+
+    # return render_template("stats.html",
+    #                     flavours=results,
+    #                     total_value=total_value,
+    #                     total_drinks=total_drinks,
+    #                     stats=main_flavours,  # <-- THIS IS REQUIRED
+    #                     )
     conn = sqlite3.connect('./.database/flavors.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -208,74 +246,58 @@ def stats():
         WHERE totalDrinks > 0
         ORDER BY totalDrinks DESC;
     """)
-    results = cursor.fetchall()
+    rows = cursor.fetchall()
     conn.close()
 
-    total_value = sum(row['totalCaffeine'] for row in results)
-    total_drinks = sum(row['totalDrinks'] for row in results)
+    # Calculate total values
+    total_caffeine = sum(row['totalCaffeine'] for row in rows)
+    total_drinks = sum(row['totalDrinks'] for row in rows)
 
-    # Group data
-    main_flavours = []
-    other_drinks = 0
+    # Prepare pie chart data
+    pie_data = []
+    other_count = 0
 
-    for row in results:
+    for row in rows:
         if row['totalDrinks'] >= 3:
-            main_flavours.append({'flavour': row['flavour'], 'totalDrinks': row['totalDrinks']})
+            pie_data.append({
+                'flavour': row['flavour'],
+                'totalDrinks': row['totalDrinks']
+            })
         else:
-            other_drinks += row['totalDrinks']
+            other_count += row['totalDrinks']
 
-    if other_drinks > 0:
-        main_flavours.append({'flavour': 'Other', 'totalDrinks': other_drinks})
+    if other_count > 0:
+        pie_data.append({
+            'flavour': 'Other',
+            'totalDrinks': other_count
+        })
 
-    # Prepare pie chart
-    labels = [item['flavour'] for item in main_flavours]
-    values = [item['totalDrinks'] for item in main_flavours]
-    colors = [flavour_colors.get(label, '#888888') for label in labels]
+    # Assign colors to each flavour in pie chart
+    colors = [flavour_colors.get(item['flavour'], '#888888') for item in pie_data]
 
-    fig, ax = plt.subplots(figsize=(7, 7))
-    
-    fig.patch.set_facecolor('#0D1B2A')  # Set background color
-    wedges, texts, autotexts = ax.pie(
-        values,
-        labels=labels,
-        colors=colors,
-        autopct="%1.1f%%",
-        pctdistance=0,
-        startangle=140,
-        textprops={"color": "black"}
-    )
-    ax.axis("equal")
-
-    # Save to base64 image
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png", bbox_inches="tight")
-    buf.seek(0)
-    pie_chart_uri = f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
-    buf.close()
-    plt.close(fig)
-
-    return render_template("stats.html", 
-                           flavours=results,
-                           total_value=total_value,
+    return render_template("stats.html",
+                           flavours=rows,
+                           total_value=total_caffeine,
                            total_drinks=total_drinks,
-                           pie_chart=pie_chart_uri)
-    
+                           stats=pie_data,
+                           colors=colors)
 
 @app.route('/ranks')
 def ranks():
     conn = sqlite3.connect('.database/flavors.db')
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT flavour, COUNT(*) as total
+        SELECT flavour, totalDrinks, totalCaffeine
         FROM flavours
         WHERE totalDrinks > 0
-        GROUP BY flavour
-        ORDER BY totalDrinks DESC
+        ORDER BY totalDrinks DESC;
     """)
-    ranks = cursor.fetchall()  # List of (flavour, total)
-
+    ranked_flavours = cursor.fetchall()
     conn.close()
-    return render_template('ranks.html', ranks=ranks)
+
+    return render_template("ranks.html", ranks=ranked_flavours)
+
 
 app.run(debug=True, port=5000)

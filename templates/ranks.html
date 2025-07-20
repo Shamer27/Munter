@@ -1,14 +1,35 @@
 {% extends "base.html" %}
-
 {% block content %}
-  <h2>Flavour Rankings</h2>
+  <h1>Flavour Rankings</h1>
 
-  {% for flavour, total in ranks %}
-    <div class="card">
-      <h3>{{ flavour }}</h3>
-      <p>Total Drinks: {{ totalDrinks }}</p>
-    </div>
-  {% else %}
-    <p>No drinks logged yet.</p>
-  {% endfor %}
+  <div class="centering">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Flavour</th>
+          <th>Total Drinks</th>
+          <th>Total Caffeine</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for flavour in ranks %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ flavour.flavour }}</td>
+          <td>{{ flavour.totalDrinks }}</td>
+          <td>
+            {% if flavour.totalCaffeine >= 1000000 %}
+              {{ (flavour.totalCaffeine / 1000000)|round(2) }} kg
+            {% elif flavour.totalCaffeine >= 1000 %}
+              {{ (flavour.totalCaffeine / 1000)|round(2) }} g
+            {% else %}
+              {{ flavour.totalCaffeine }} mg
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock %}

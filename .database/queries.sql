@@ -152,6 +152,13 @@
 UPDATE
   flavours
 SET
-  totalCaffeine = 150
+  totalCaffeine = 0
 WHERE
-  totalCaffeine = 0;
+  totalCaffeine > 0;
+
+UPDATE
+  flavours
+SET
+  totalDrinks = 0
+WHERE
+  totalDrinks > 0;
