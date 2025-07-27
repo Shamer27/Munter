@@ -3,6 +3,22 @@
   <h1>Flavour Rankings</h1>
 
   <div class="centering">
+  <h2>Your Current Rank: {{ current_rank }}</h2>
+  <img src="{{ url_for('static', filename='images/ranks/' + rank_image) }}"
+      alt="{{ current_rank }} badge"
+      width="96" height="96">
+    
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" style="width: {{ progress }}%;">
+        {{ progress }}%
+      </div>
+    </div>
+  </div>
+
+  <br>
+<h2>Leaderboard</h2>
+<div class="centering">
+  <div class="leaderboard-container" style="overflow-x: auto;">
     <table>
       <thead>
         <tr>
@@ -32,4 +48,38 @@
       </tbody>
     </table>
   </div>
+</div>
+<br>
+<h2>Ranks</h2>
+<div class="centering">
+  <div class="ranks-container">
+    <div style="max-height: 250px; overflow-y: auto;">
+      <table class="home-drinks-container">
+        <thead>
+          <tr>
+            <th>Flavour</th>
+            <th>Rank</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for flavour in flavour_ranks %}
+          <tr>
+            <td>{{ flavour.flavour }}</td>
+            <td style="text-align: center;">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="margin-bottom: 4px;">{{ flavour.rank }}</div>
+                <img src="{{ flavour.image }}"
+                    alt="{{ flavour.rank }} badge"
+                    width="96" height="96">
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<br>
+
 {% endblock %}

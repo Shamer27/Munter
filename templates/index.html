@@ -12,7 +12,7 @@
 
 <br>
 
-<div class="centering">
+
 <body>
 <div class="centering">
   <div class="home-drinks-container" style="overflow-x: auto;">
@@ -43,6 +43,37 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
+</div>
+<br>
+<h2>Rank Images</h2>
+<div class="centering">
+  <div class="ranks-container">
+    <div style="max-height: 250px; overflow-y: auto;">
+      <table class="home-drinks-container">
+        <thead>
+          <tr>
+            <th>Flavour</th>
+            <th>Rank</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for flavour in flavour_ranks %}
+          <tr>
+            <td>{{ flavour.flavour }}</td>
+            <td style="text-align: center;">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="margin-bottom: 4px;">{{ flavour.rank }}</div>
+                <img src="{{ flavour.image }}"
+                    alt="{{ flavour.rank }} badge"
+                    width="96" height="96">
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

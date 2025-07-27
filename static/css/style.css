@@ -116,11 +116,13 @@ th-flavour {
 
 /* Index Page */
 .home-drinks-container {
+  background-color: var(--mid-navy);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
   align-self: center;
   align-items: center;
   text-align: center;
   margin-top: 20px;
-  width: 90%;
   height: 250px;
   overflow: scroll;
   overflow-x: hidden;
@@ -243,5 +245,44 @@ input[type=submit] {
   border-radius: 8px;
   margin-top: 16px;
   font-size: 14px;
+}
+
+.progress-bar-container {
+  width: 80%;
+  height: 30px;
+  background-color: #e0e0e0;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--steel-blue);
+  color: white;
+  text-align: center;
+  line-height: 30px;
+  transition: width 0.4s ease;
+}
+
+.leaderboard-container {
+  background-color: var(--mid-navy);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  max-height: 250px;
+}
+
+.ranks-container {
+  background-color: var(--mid-navy);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  align-self: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 20px;
+  --sb-track-color: #232E33;
+  --sb-thumb-color: #778da9;
+  --sb-size: 14px;
+  width: 100%;
 }
 }

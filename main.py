@@ -16,8 +16,8 @@ app.secret_key = "munt"
 
 @app.route("/")
 def Home():
-    conn = sqlite3.connect('.database/flavors.db')  # Make sure this path is correct
-    conn.row_factory = sqlite3.Row  # To access rows like dicts
+    conn = sqlite3.connect('.database/flavors.db')
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -28,7 +28,69 @@ def Home():
     """)
     flavours = cursor.fetchall()
     conn.close()
-    return render_template("index.html", flavours=flavours)
+
+    # Rank logic
+    total_drinks = sum(row['totalDrinks'] for row in flavours)
+
+    ranks_list = [
+        {"name": "Monster", "drinks": 200},
+        {"name": "Diamond", "drinks": 150},
+        {"name": "Platinum", "drinks": 100},
+        {"name": "Gold", "drinks": 70},
+        {"name": "Silver", "drinks": 40},
+        {"name": "Bronze", "drinks": 0}
+    ]
+
+    current_rank = "Bronze"
+    for rank in ranks_list:
+        if total_drinks >= rank["drinks"]:
+            current_rank = rank["name"]
+            break
+
+    current_index = next((i for i, r in enumerate(ranks_list) if r["name"] == current_rank), None)
+    next_index = current_index - 1 if current_index > 0 else None
+
+    if next_index is not None:
+        next_drinks = ranks_list[next_index]["drinks"]
+        drinks_for_next = next_drinks - ranks_list[current_index]["drinks"]
+        progress = int(((total_drinks - ranks_list[current_index]["drinks"]) / drinks_for_next) * 100)
+    else:
+        progress = 100
+
+    image_filename = f"{current_rank.lower()}.png"
+
+    # Rank by flavour
+    flavour_ranks = []
+    for row in flavours:
+        drinks = row["totalDrinks"]
+        if drinks >= 100:
+            rank = "Monster"
+        elif drinks >= 50:
+            rank = "Diamond"
+        elif drinks >= 25:
+            rank = "Platinum"
+        elif drinks >= 10:
+            rank = "Gold"
+        elif drinks >= 5:
+            rank = "Silver"
+        else:
+            rank = "Bronze"
+
+        flavour_ranks.append({
+            "flavour": row["flavour"],
+            "totalDrinks": drinks,
+            "totalCaffeine": row["totalCaffeine"],
+            "rank": rank,
+            "image": f"/static/images/ranks/{rank.lower()}.png"
+        })
+
+    return render_template("index.html",
+                           flavours=flavours,
+                           current_rank=current_rank,
+                           progress=progress,
+                           rank_image=image_filename,
+                           flavour_ranks=flavour_ranks)
+
 
 
 
@@ -244,47 +306,86 @@ def stats():
 
 @app.route('/ranks')
 def ranks():
-    import sqlite3
-
-    rank_thresholds = [
-         ("MONSTER", 500, 1000, 100000),
-         ("Diamond", 250, 500, 75000),
-         ("Platinum", 100, 250, 50000),
-         ("Gold", 50, 150, 25000),
-         ("Silver", 25, 75, 15000),
-         ("Bronze", 10, 25, 5000)
-
-    ]
-    conn = sqlite3.connect('.database/flavors.db')
+    conn = sqlite3.connect('./.database/flavors.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT SUM(totalDrinks) as totalDrinksRanked, SUM(totalCaffeine) as totalCaffeineRanked
+        SELECT flavour, totalDrinks, totalCaffeine
         FROM flavours
         WHERE totalDrinks > 0
         ORDER BY totalDrinks DESC;
     """)
     ranked_flavours = cursor.fetchall()
+
+    # Calculate totals
+    total_drinks = sum(row['totalDrinks'] for row in ranked_flavours)
+    total_caffeine = sum(row['totalCaffeine'] for row in ranked_flavours)
+
+    # Define rank thresholds and images
+    ranks_list = [
+        {"name": "Monster", "drinks": 200},
+        {"name": "Diamond", "drinks": 150},
+        {"name": "Platinum", "drinks": 100},
+        {"name": "Gold", "drinks": 70},
+        {"name": "Silver", "drinks": 40},
+        {"name": "Bronze", "drinks": 0}
+    ]
+
+    # Determine current rank
+    current_rank = "Bronze"
+    for rank in ranks_list:
+        if total_drinks >= rank["drinks"]:
+            current_rank = rank["name"]
+            break
+
+    # Progress to next rank
+    current_index = next((i for i, r in enumerate(ranks_list) if r["name"] == current_rank), None)
+    next_index = current_index - 1 if current_index > 0 else None
+
+    if next_index is not None:
+        next_drinks = ranks_list[next_index]["drinks"]
+        drinks_for_next = next_drinks - ranks_list[current_index]["drinks"]
+        progress = int(((total_drinks - ranks_list[current_index]["drinks"]) / drinks_for_next) * 100)
+    else:
+        progress = 100  # Maxed out
+
+    # Get image filename
+    image_filename = f"{current_rank.lower()}.png"
+    
+    flavour_ranks = []
+    for row in ranked_flavours:
+        drinks = row["totalDrinks"]
+        if drinks >= 100:
+            rank = "Monster"
+        elif drinks >= 50:
+            rank = "Diamond"
+        elif drinks >= 25:
+            rank = "Platinum"
+        elif drinks >= 10:
+            rank = "Gold"
+        elif drinks >= 5:
+            rank = "Silver"
+        else:
+            rank = "Bronze"
+
+        flavour_ranks.append({  # ✅ Correct indentation
+            "flavour": row["flavour"],
+            "totalDrinks": drinks,
+            "totalCaffeine": row["totalCaffeine"],
+            "rank": rank,
+            "image": f"/static/images/ranks/{rank.lower()}.png"
+        })
+
     conn.close()
 
-    flavour_ranked = result["totalDrinksRanked"] or 0
-    total_caffeiene_ranked = result["totalCaffeineRanked"] or 0
+    return render_template("ranks.html",
+                           ranks=ranked_flavours,
+                           current_rank=current_rank,
+                           flavour_ranks=flavour_ranks,
+                           progress=progress,
+                           rank_image=image_filename)
 
-    currentRank = "Unranked"
-    nextRank = None
-    progess = 0
-
-    for i in range(len(rank_thresholds)):
-        rank, min_drinks, min_caff, total = rank_thresholds[i]
-
-        if flavour_ranked >= min_drinks and total_caffeiene_ranked >= min_caff:
-            currentRank = rank
-
-            if i > 0:
-                 nextRank, nextDrinks, nextCaff = rank_thresholds [i - 1]
-
-    return render_template("ranks.html", ranks=ranked_flavours)
 
 
 app.run(debug=True, port=5000)
