@@ -6,6 +6,13 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Make the layout extend into the device safe areas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Color the browser UI to match your app -->
+  <meta name="theme-color" content="#0D1B2A">
+  <!-- iOS PWA status bar -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
   <title>Munter: Drink Tracker</title>
 
@@ -34,5 +41,6 @@
       .catch(err => console.error("Service Worker error:", err));
   }
 </script>
+
 </body>
 </html>

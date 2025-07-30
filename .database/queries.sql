@@ -149,16 +149,26 @@
 
 
 
-UPDATE
-  flavours
-SET
-  totalCaffeine = 0
-WHERE
-  totalCaffeine > 0;
+-- UPDATE
+--   flavours
+-- SET
+--   totalCaffeine = 0
+-- WHERE
+--   totalCaffeine > 0;
 
-UPDATE
-  flavours
-SET
-  totalDrinks = 0
-WHERE
-  totalDrinks > 0;
+-- UPDATE
+--   flavours
+-- SET
+--   totalDrinks = 0
+-- WHERE
+--   totalDrinks > 0;
+
+CREATE TABLE IF NOT EXISTS flavours_device (
+  device_id TEXT NOT NULL,
+  flavour   TEXT NOT NULL,
+  caffeine  INTEGER NOT NULL,
+  size      INTEGER NOT NULL,
+  totalDrinks INTEGER NOT NULL DEFAULT 0,
+  totalCaffeine INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (device_id, flavour)
+);

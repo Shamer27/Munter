@@ -1,7 +1,7 @@
 {
     "name": "Munter",
     "short_name": "Munt",
-    "start_url": "/stats",
+    "start_url": "/index",
     "display": "standalone",
     "background_color": "#1abc9c",
     "theme_color": "#fdfdfd",

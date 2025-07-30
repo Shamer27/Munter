@@ -1,53 +1,68 @@
 import sqlite3
-from flask import Flask, render_template, request, session, redirect, flash, jsonify, url_for
-import db
-import matplotlib
-matplotlib.use('Agg')  # Use a non-interactive backend for matplotlib
-import matplotlib.pyplot as plt
-import io
-import base64
-from werkzeug.exceptions import abort
+import uuid
+from flask import Flask, render_template, make_response, request, redirect, url_for
 from flask_compress import Compress
-from db import getAllFlavours, addDrink, getLoggedFlavours
+import matplotlib
+matplotlib.use('Agg')  # safe on servers without display
+
+# --- Config ---
+DB_PATH = "./.database/flavors.db"   # <-- adjust if your DB is elsewhere
 
 app = Flask(__name__)
 Compress(app)
 app.secret_key = "munt"
 
+# --- Helpers ---
+
+def get_or_set_device_id():
+    device_id = request.cookies.get("device_id")
+    new_cookie = False
+    if not device_id:
+        device_id = str(uuid.uuid4())
+        new_cookie = True
+    return device_id, new_cookie
+
+def get_conn():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+# --- Routes ---
+
 @app.route("/")
 def Home():
-    conn = sqlite3.connect('.database/flavors.db')
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    device_id, new_cookie = get_or_set_device_id()
 
+    conn = get_conn()
+    cursor = conn.cursor()
     cursor.execute("""
         SELECT flavour, totalDrinks, totalCaffeine
-        FROM flavours
-        WHERE totalDrinks > 0
+        FROM flavours_device
+        WHERE device_id = ?
         ORDER BY totalDrinks DESC;
-    """)
+    """, (device_id,))
     flavours = cursor.fetchall()
     conn.close()
 
-    # Rank logic
     total_drinks = sum(row['totalDrinks'] for row in flavours)
 
     ranks_list = [
-        {"name": "Monster", "drinks": 200},
-        {"name": "Diamond", "drinks": 150},
+        {"name": "Monster",  "drinks": 200},
+        {"name": "Diamond",  "drinks": 150},
         {"name": "Platinum", "drinks": 100},
-        {"name": "Gold", "drinks": 70},
-        {"name": "Silver", "drinks": 40},
-        {"name": "Bronze", "drinks": 0}
+        {"name": "Gold",     "drinks": 70},
+        {"name": "Silver",   "drinks": 40},
+        {"name": "Bronze",   "drinks": 0},
     ]
 
+    # Determine current rank (list is highest->lowest threshold)
     current_rank = "Bronze"
-    for rank in ranks_list:
-        if total_drinks >= rank["drinks"]:
-            current_rank = rank["name"]
+    for r in ranks_list:
+        if total_drinks >= r["drinks"]:
+            current_rank = r["name"]
             break
 
-    current_index = next((i for i, r in enumerate(ranks_list) if r["name"] == current_rank), None)
+    current_index = next((i for i, r in enumerate(ranks_list) if r["name"] == current_rank), 0)
     next_index = current_index - 1 if current_index > 0 else None
 
     if next_index is not None:
@@ -59,7 +74,6 @@ def Home():
 
     image_filename = f"{current_rank.lower()}.png"
 
-    # Rank by flavour
     flavour_ranks = []
     for row in flavours:
         drinks = row["totalDrinks"]
@@ -81,266 +95,141 @@ def Home():
             "totalDrinks": drinks,
             "totalCaffeine": row["totalCaffeine"],
             "rank": rank,
-            "image": f"/static/images/ranks/{rank.lower()}.png"
+            "image": f"/static/images/ranks/{rank.lower()}.png",
         })
 
-    return render_template("index.html",
-                           flavours=flavours,
-                           current_rank=current_rank,
-                           progress=progress,
-                           rank_image=image_filename,
-                           flavour_ranks=flavour_ranks)
+    resp = make_response(render_template(
+        "index.html",
+        flavours=flavours,
+        current_rank=current_rank,
+        progress=progress,
+        rank_image=image_filename,
+        flavour_ranks=flavour_ranks
+    ))
+    if new_cookie:
+        resp.set_cookie("device_id", device_id, max_age=60*60*24*365*5, httponly=True, samesite="Lax")
+    return resp
 
 
-
-
-@app.route('/add', methods=['GET', 'POST'])
+@app.route("/add", methods=["GET", "POST"])
 def add():
-    flavour = request.form.get('flavour')
+    if request.method == "POST":
+        flavour = request.form.get("flavour")
+        if not flavour:
+            return redirect(url_for("Home"))
 
-    if request.method == 'POST':
-        flavour = request.form['flavour']
-        conn = sqlite3.connect('.database/flavors.db')
+        device_id, new_cookie = get_or_set_device_id()
+        conn = get_conn()
         cursor = conn.cursor()
-        # Increment totalDrinks and update totalCaffeine
+
+        # Update existing row for this device/flavour
         cursor.execute("""
-            UPDATE flavours
-            SET totalDrinks = totalDrinks + 1,
-                totalCaffeine = caffeine * (totalDrinks + 1)
-            WHERE flavour = ?;
-        """, (flavour,))
+            UPDATE flavours_device
+               SET totalDrinks   = totalDrinks + 1,
+                   totalCaffeine = totalCaffeine + caffeine
+             WHERE device_id = ? AND flavour = ?;
+        """, (device_id, flavour))
+
+        if cursor.rowcount == 0:
+            # Insert from master flavours table
+            cursor.execute("""
+                INSERT INTO flavours_device (device_id, flavour, caffeine, size, totalDrinks, totalCaffeine)
+                SELECT ?, flavour, caffeine, size, 1, caffeine
+                  FROM flavours
+                 WHERE flavour = ?;
+            """, (device_id, flavour))
+
         conn.commit()
         conn.close()
-        return redirect('/')  # redirect to drinks list
 
-    return render_template('add.html') 
+        resp = make_response(redirect(url_for("Home")))
+        if new_cookie:
+            resp.set_cookie("device_id", device_id, max_age=60*60*24*365*5, httponly=True, samesite="Lax")
+        return resp
 
-@app.route('/stats')
+    return render_template("add.html")
+
+
+@app.route("/stats")
 def stats():
-    import sqlite3
-    
+    # Color map (trimmed for brevity—keep your full dict if you want)
     flavour_colors = {
-        'Absolutely Zero': '#888888',
-        'Assault': '#b71c1c',
-        'Aussie Style Lemonade': '#888888',
-        'Ballers Blend': '#888888',
-        'Black': '#000000',
-        'Black Ice': '#888888',
-        'Blue': '#2196f3',
-        'Cuba-Libre': '#888888',
-        'Cuba-Lima': '#888888',
-        'DUB Edition': '#888888',
-        'Fury': '#888888',
-        'Ghost M-100': '#888888',
-        'Gold': '#ffd700',
-        'Green': '#4caf50',
-        'Gronk': '#888888',
-        'Heavy Metal': '#888888',
-        'Import': '#888888',
-        'Java Big Black': '#888888',
-        'Java Café Latte': '#888888',
-        'Java Café Mocha': '#888888',
-        'Java Cold Brew Latte': '#888888',
-        'Java Cold Brew Sweet Black': '#888888',
-        'Java Farmers Oats': '#888888',
-        'Java French Vanilla': '#888888',
-        'Java Irish Blend': '#bfa980',
-        'Java Kona Blend': '#888888',
-        'Java Loca Moca': '#888888',
-        'Java Mean Bean': '#cdb79e',
-        'Java Oatmilk Latte': '#888888',
-        'Java Oatmilk Mocha': '#888888',
-        'Java Salted Caramel': '#cfa36c',
-        'Java Swiss Chocolate': '#888888',
-        'Juiced Aussie Style Lemonade': '#fff176',
-        'Juiced Khaotic': '#888888',
-        'Juiced Khaotic (Tropical Orange)': '#888888',
-        'Juiced Mango Loco': '#ff9f00',
-        'Juiced Monarch': '#fbb13c',
-        'Juiced Papillon': '#edc0bf',
-        'Juiced Rio Punch': '#888888',
-        'Khaos': '#888888',
-        'Lewis Hamilton 44': '#d4af37',
-        'Lewis Hamilton Zero Sugar': '#888888',
-        'Lo-Carb': '#0d47a1',
-        'M-80': '#888888',
-        'MIXXD': '#888888',
-        'Mad Dog': '#888888',
-        'Mango Loco': '#ff9f00',
-        'Nitro Anti-Gravity': '#888888',
-        'Nitro Black Ice': '#1e1e1e',
-        'Nitro Cosmic Apple': '#888888',
-        'Nitro Cosmic Berry': '#888888',
-        'Nitro Cosmic Berry Lemonade': '#888888',
-        'Nitro Cosmic Birthday Cake': '#888888',
-        'Nitro Cosmic Blue Raspberry': '#888888',
-        'Nitro Cosmic Bubblegum': '#888888',
-        'Nitro Cosmic Candy Corn': '#888888',
-        'Nitro Cosmic Cherry': '#888888',
-        'Nitro Cosmic Cherry Limeade': '#888888',
-        'Nitro Cosmic Citrus': '#888888',
-        'Nitro Cosmic Citrus Punch': '#888888',
-        'Nitro Cosmic Cotton Candy': '#888888',
-        'Nitro Cosmic Dragonfruit': '#888888',
-        'Nitro Cosmic Fruit Punch': '#888888',
-        'Nitro Cosmic Grape': '#888888',
-        'Nitro Cosmic Kiwi': '#888888',
-        'Nitro Cosmic Lime': '#888888',
-        'Nitro Cosmic Lychee': '#888888',
-        'Nitro Cosmic Mango': '#888888',
-        'Nitro Cosmic Marshmallow': '#888888',
-        'Nitro Cosmic Orange': '#888888',
-        'Nitro Cosmic Passionfruit': '#888888',
-        'Nitro Cosmic Peach': '#888888',
-        'Nitro Cosmic Pineapple': '#888888',
-        'Nitro Cosmic Strawberry': '#888888',
-        'Nitro Cosmic Tropical Punch': '#888888',
-        'Nitro Cosmic Watermelon': '#888888',
-        'Nitro Cosmic Yuzu': '#888888',
-        'Nitro Killer B': '#888888',
-        'Nitro Super Dry': '#c0c0c0',
         'Original': '#2e7d32',
-        'Pacific Punch': '#e4572e',
-        'Phantom M-100': '#888888',
-        'Pink': '#ec407a',
-        'Pipeline Punch': '#888888',
-        'Red': '#f44336',
-        'Rehab Green Tea': '#81c784',
-        'Rehab Lemonade': '#f4e04d',
-        'Rehab Orangeade': '#888888',
-        'Rehab Peach Tea': '#f8b195',
-        'Rehab Pink Lemonade': '#888888',
-        'Rehab Protean': '#888888',
-        'Rehab Rojo Tea': '#888888',
-        'Reserve Kiwi Strawberry': '#888888',
-        'Reserve Orange Dreamsicle': '#888888',
-        'Reserve Peaches N Crème': '#888888',
-        'Reserve Watermelon': '#888888',
-        'Reserve White Pineapple': '#888888',
-        'Ripper': '#888888',
-        'The Doctor VR46': '#ffd700',
-        'Ultra Arctic': '#888888',
-        'Ultra Black': '#888888',
-        'Ultra Black Cherry': '#888888',
         'Ultra Blue': '#4a90e2',
-        'Ultra Blue Hawaii': '#888888',
-        'Ultra Chill': '#888888',
-        'Ultra Citron': '#ffeb3b',
-        'Ultra Cosmic': '#888888',
-        'Ultra Dragonfruit': '#888888',
-        'Ultra Eclipse': '#888888',
-        'Ultra Fiesta': '#ffa726',
-        'Ultra Fiesta Mango': '#888888',
-        'Ultra Frost': '#888888',
-        'Ultra Galaxy': '#888888',
-        'Ultra Grape': '#888888',
-        'Ultra Green Apple': '#888888',
-        'Ultra Ice': '#888888',
-        'Ultra Kiwi Lime': '#888888',
-        'Ultra Lemon Ice': '#888888',
-        'Ultra Lychee': '#888888',
-        'Ultra Moonlight': '#888888',
-        'Ultra Nova': '#888888',
         'Ultra Paradise': '#66bb6a',
-        'Ultra Peachy Keen': '#ffc0cb',
         'Ultra Red': '#c42126',
-        'Ultra Rosa': '#f95a9b',
-        'Ultra Sakura': '#888888',
-        'Ultra Strawberry Dreams': '#ff99cc',
-        'Ultra Sunrise': '#ffa726',
         'Ultra Violet': '#7e57c2',
-        'Ultra Violet Storm': '#888888',
-        'Ultra Watermelon': '#ff5e78',
-        'Ultra White Pineapple': '#888888',
-        'Ultra Yuzu': '#888888',
-        'Unleaded': '#888888',
+        'Mango Loco': '#ff9f00',
+        'Gold': '#ffd700',
         'White': '#ffffff',
-        'Zero Ultra (white)': '#ffffff'
+        'Zero Ultra (white)': '#ffffff',
     }
-    
-    conn = sqlite3.connect('./.database/flavors.db')
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
 
+    device_id, _ = get_or_set_device_id()
+    conn = get_conn()
+    cursor = conn.cursor()
+    # If you want per-device stats, switch to flavours_device + device_id filter
     cursor.execute("""
         SELECT flavour, totalDrinks, totalCaffeine
-        FROM flavours
-        WHERE totalDrinks > 0
+        FROM flavours_device
+        WHERE device_id = ?
         ORDER BY totalDrinks DESC;
-    """)
+    """, (device_id,))
     rows = cursor.fetchall()
     conn.close()
 
-    # Calculate total values
     total_caffeine = sum(row['totalCaffeine'] for row in rows)
-    total_drinks = sum(row['totalDrinks'] for row in rows)
+    total_drinks   = sum(row['totalDrinks'] for row in rows)
+    total_volume  = sum(500 * row['totalDrinks'] for row in rows)
 
-    # Prepare pie chart data
-    pie_data = []
-    other_count = 0
-
-    for row in rows:
-        # if row['totalDrinks'] >= 3:
-            pie_data.append({
-                'flavour': row['flavour'],
-                'totalDrinks': row['totalDrinks']
-            })
-        # else:
-        #     other_count += row['totalDrinks']
-
-    # if other_count > 0:
-    #     pie_data.append({
-    #         'flavour': 'Other',
-    #         'totalDrinks': other_count
-    #     })
-
-    # Assign colors to each flavour in pie chart
+    pie_data = [{'flavour': row['flavour'], 'totalDrinks': row['totalDrinks']} for row in rows]
     colors = [flavour_colors.get(item['flavour'], '#888888') for item in pie_data]
 
-    return render_template("stats.html",
-                           flavours=rows,
-                           total_value=total_caffeine,
-                           total_drinks=total_drinks,
-                           stats=pie_data,
-                           colors=colors)
+    return render_template(
+        "stats.html",
+        flavours=rows,
+        total_value=total_caffeine,
+        total_drinks=total_drinks,
+        stats=pie_data,
+        colors=colors,
+        total_volume=total_volume,
+    )
 
-@app.route('/ranks')
+
+@app.route("/ranks")
 def ranks():
-    conn = sqlite3.connect('./.database/flavors.db')
-    conn.row_factory = sqlite3.Row
+    device_id, _ = get_or_set_device_id()
+    conn = get_conn()
     cursor = conn.cursor()
 
     cursor.execute("""
         SELECT flavour, totalDrinks, totalCaffeine
-        FROM flavours
-        WHERE totalDrinks > 0
+        FROM flavours_device
+        WHERE device_id = ?
         ORDER BY totalDrinks DESC;
-    """)
+    """, (device_id,))
     ranked_flavours = cursor.fetchall()
+    conn.close()
 
-    # Calculate totals
-    total_drinks = sum(row['totalDrinks'] for row in ranked_flavours)
+    total_drinks   = sum(row['totalDrinks']   for row in ranked_flavours)
     total_caffeine = sum(row['totalCaffeine'] for row in ranked_flavours)
 
-    # Define rank thresholds and images
     ranks_list = [
-        {"name": "Monster", "drinks": 200},
-        {"name": "Diamond", "drinks": 150},
+        {"name": "Monster",  "drinks": 200},
+        {"name": "Diamond",  "drinks": 150},
         {"name": "Platinum", "drinks": 100},
-        {"name": "Gold", "drinks": 70},
-        {"name": "Silver", "drinks": 40},
-        {"name": "Bronze", "drinks": 0}
+        {"name": "Gold",     "drinks": 70},
+        {"name": "Silver",   "drinks": 40},
+        {"name": "Bronze",   "drinks": 0},
     ]
 
-    # Determine current rank
     current_rank = "Bronze"
-    for rank in ranks_list:
-        if total_drinks >= rank["drinks"]:
-            current_rank = rank["name"]
+    for r in ranks_list:
+        if total_drinks >= r["drinks"]:
+            current_rank = r["name"]
             break
 
-    # Progress to next rank
-    current_index = next((i for i, r in enumerate(ranks_list) if r["name"] == current_rank), None)
+    current_index = next((i for i, r in enumerate(ranks_list) if r["name"] == current_rank), 0)
     next_index = current_index - 1 if current_index > 0 else None
 
     if next_index is not None:
@@ -348,11 +237,10 @@ def ranks():
         drinks_for_next = next_drinks - ranks_list[current_index]["drinks"]
         progress = int(((total_drinks - ranks_list[current_index]["drinks"]) / drinks_for_next) * 100)
     else:
-        progress = 100  # Maxed out
+        progress = 100
 
-    # Get image filename
     image_filename = f"{current_rank.lower()}.png"
-    
+
     flavour_ranks = []
     for row in ranked_flavours:
         drinks = row["totalDrinks"]
@@ -369,23 +257,24 @@ def ranks():
         else:
             rank = "Bronze"
 
-        flavour_ranks.append({  # ✅ Correct indentation
+        flavour_ranks.append({
             "flavour": row["flavour"],
             "totalDrinks": drinks,
             "totalCaffeine": row["totalCaffeine"],
             "rank": rank,
-            "image": f"/static/images/ranks/{rank.lower()}.png"
+            "image": f"/static/images/ranks/{rank.lower()}.png",
         })
 
-    conn.close()
+    return render_template(
+        "ranks.html",
+        ranks=ranked_flavours,          # <-- make sure ranks.html uses `ranks`
+        current_rank=current_rank,
+        flavour_ranks=flavour_ranks,
+        progress=progress,
+        rank_image=image_filename
+    )
 
-    return render_template("ranks.html",
-                           ranks=ranked_flavours,
-                           current_rank=current_rank,
-                           flavour_ranks=flavour_ranks,
-                           progress=progress,
-                           rank_image=image_filename)
 
-
-
-app.run(debug=True, port=5000)
+# Only run the dev server locally, not on PythonAnywhere WSGI import
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)

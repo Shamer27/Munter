@@ -36,12 +36,12 @@
 </div>
 <br>
 <div class="centering">
-  {% if total_value >= 1000000 %}
-    <p>Your total volume: {{ (total_value / 1000000)|round(2) }} kL</p>
+  {% if total_volume >= 1000000 %}
+    <p>Your total volume: {{ (total_volume / 1000000)|round(2) }} kL</p>
   {% elif total_value >= 1000 %}
-    <p>Your total volume: {{ (total_value / 1000)|round(2) }} L</p>
+    <p>Your total volume: {{ (total_volume / 1000)|round(2) }} L</p>
   {% else %}
-    <p>Your total volume: {{ total_value }} mL</p>
+    <p>Your total volume: {{ total_volume }} mL</p>
   {% endif %}
   <br>
   
@@ -50,6 +50,7 @@
   <p>Total drinks: {{ total_drinks }}</p>
 </div>
 
+<br>
 {% if stats|length > 0 %}
   <div class="piechart-container" style="width: 100%; max-width: 500px; margin: auto;">
     <br>
