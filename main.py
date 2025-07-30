@@ -1,16 +1,19 @@
 import sqlite3
 import uuid
+import os
 from flask import Flask, render_template, make_response, request, redirect, url_for
 from flask_compress import Compress
 import matplotlib
 matplotlib.use('Agg')  # safe on servers without display
 
 # --- Config ---
-DB_PATH = "./.database/flavors.db"   # <-- adjust if your DB is elsewhere
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH  = globals().get("DB_PATH") or os.path.join(BASE_DIR, ".database", "flavors.db")  # <-- adjust if your DB is elsewhere
 
 app = Flask(__name__)
 Compress(app)
 app.secret_key = "munt"
+
 
 # --- Helpers ---
 
@@ -21,6 +24,27 @@ def get_or_set_device_id():
         device_id = str(uuid.uuid4())
         new_cookie = True
     return device_id, new_cookie
+
+def ensure_schema():
+    """
+    Create the per-device table that tests (and the app) rely on.
+    The tests seed the master 'flavours' table separately.
+    """
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS flavours_device (
+          device_id TEXT NOT NULL,
+          flavour   TEXT NOT NULL,
+          caffeine  INTEGER NOT NULL,
+          size      INTEGER NOT NULL,
+          totalDrinks INTEGER NOT NULL DEFAULT 0,
+          totalCaffeine INTEGER NOT NULL DEFAULT 0,
+          PRIMARY KEY (device_id, flavour)
+        );
+    """)
+    conn.commit()
+    conn.close()
 
 def get_conn():
     conn = sqlite3.connect(DB_PATH)
